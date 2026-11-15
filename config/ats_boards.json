@@ -1,0 +1,23 @@
+﻿{
+  "_note": "Verified live 2026-11-16 (public JSON endpoints, read-only). ro_seen = postings with a Romanian location signal in the first response page (Workday: first 20 for searchText=Romania). Not linked to CIFs yet: the engine finds them from firm sites; this list is a seed for recipes.",
+  "workday": [
+    {"company": "ING Hubs Romania", "tenant": "ing", "wd": "wd3", "site": "ICSGBLCOR", "total": 109, "ro_seen": 12},
+    {"company": "LSEG", "tenant": "lseg", "wd": "wd3", "site": "Careers", "total": 48, "ro_seen": 9},
+    {"company": "CrowdStrike", "tenant": "crowdstrike", "wd": "wd5", "site": "crowdstrikecareers", "total": 17, "ro_seen": 6},
+    {"company": "Fortrea", "tenant": "fortrea", "wd": "wd1", "site": "Fortrea", "total": 15, "ro_seen": 2}
+  ],
+  "greenhouse": [
+    {"company": "Suvoda", "slug": "suvoda", "ro_seen": 12}, {"company": "Awin", "slug": "awin", "ro_seen": 11},
+    {"company": "OPSWAT", "slug": "opswat", "ro_seen": 8}, {"company": "Cresta", "slug": "cresta", "ro_seen": 5},
+    {"company": "Yes Energy", "slug": "yesenergy", "ro_seen": 3}, {"company": "Octus", "slug": "octus", "ro_seen": 2}
+  ],
+  "lever": [
+    {"company": "TSMG", "slug": "tsmg", "ro_seen": 30}, {"company": "Brillio", "slug": "brillio-2", "ro_seen": 5},
+    {"company": "Welo Global", "slug": "weloglobal", "ro_seen": 4}, {"company": "Aleph", "slug": "aleph", "ro_seen": 4},
+    {"company": "Caseware", "slug": "caseware", "ro_seen": 1}
+  ],
+  "workable": [
+    {"company": "Garmin Cluj", "slug": "garmin-cluj", "ro_seen": 10}, {"company": "Somarest (OC Prod)", "slug": "ocprod", "ro_seen": 2}
+  ],
+  "no_result": ["zentiva (Workday: 0 RO in first page)", "nxp (Workday: HTTP 422, other site name)", "levistraussandco (0 RO)", "wolt (1 RO of 191)", "decathlon-romania and cososys (Workable: 0, other source)"]
+}
