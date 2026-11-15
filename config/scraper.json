@@ -1,0 +1,27 @@
+{
+  "userAgent": "job_seeker_ro_spider",
+  "requestTimeoutSec": 10,
+  "pageDelaySec": 1.0,
+  "retry": {
+    "maxAttempts": 5,
+    "baseDelaySec": 2.0,
+    "maxDelaySec": 60.0,
+    "retryStatus": [429, 500, 502, 503, 504]
+  },
+  "rendering": {"mode": "static", "waitSelector": "", "timeoutMs": 30000},
+  "staleJobDeletion": false,
+  "manageCompany": true,
+  "defaultLocation": ["{{DEFAULT_CITY}}"],
+  "defaultWorkmode": "on-site",
+  "ownJobUrlPrefix": "{{JOB_URL_PREFIX}}",
+  "sources": {
+    "sitemap": "{{SITEMAP_URL}}",
+    "listing": "{{CAREER_URL}}",
+    "jobArchive": "{{JOB_URL_PREFIX}}"
+  },
+  "selectors": {
+    "jobArticle": ["{{SELECTOR_JOB_ARTICLE}}", "[class*='job']", ".vacancy, .position, .listing-item"],
+    "jobTitle": ["{{SELECTOR_JOB_TITLE}}", "h1, h2, h3, h4", "[itemprop='title'], [aria-label]", "a"],
+    "jobMeta": ["{{SELECTOR_JOB_META}}", "p, .meta, [class*='deadline']"]
+  }
+}
