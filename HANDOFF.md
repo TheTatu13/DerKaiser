@@ -14,6 +14,7 @@ PorneÈ™te de la firmÄƒ (CIF din ANOFM), Ã®i gÄƒseÈ™te site-ul È™i
 | BestJobs pe firmÄƒ | `portals.py` | firma â†’ pagina ei de profil â†’ anunÈ›urile active (potrivire exactÄƒ pe nume) |
 | eJobs | `ejobs.py` | sitemap-urile publicate de ei pentru boÈ›i + `JobPosting` JSON-LD |
 | Common Crawl | `cc.py` | index citit direct de pe data.commoncrawl.org (API-ul lor dÄƒ 504) |
+| posturi.gov.ro | `posturi.py` | portalul statului (ANFP): posturi din sectorul public; `JobPosting` JSON-LD; robots.txt permite tot; fără termeni de reutilizare publicați |
 | Deduplicare | `merge.py` | pe link normalizat È™i pe (firmÄƒ, titlu, oraÈ™) |
 
 Plase de siguranÈ›Äƒ: reÃ®ncercÄƒri cu backoff, pauzÄƒ pe host (implicit 3 s), circuit breaker, robots.txt, buget de cereri/timp pe firmÄƒ,
@@ -56,4 +57,5 @@ accesul la indexul Common Crawl, 2 reÈ›ete Ã®nvÄƒÈ›ate corect (Valrom,
 
 ## FiÈ™iere de date (nu sunt Ã®n pachet)
 `run_all/` (pe PC-ul lui Mihai): `out/jobs_by_firm.jsonl`, `out/jobs.jsonl`, `portal_jobs.jsonl`, `ejobs_jobs.jsonl`, `all_distinct.jsonl`.
+
 

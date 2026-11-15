@@ -17,3 +17,8 @@ Nu e aviz juridic. Decizia aparține asociației.
 1. Cerere de acord/API către BestJobs și eJobs (dacă asociația are relații cu ele).
 2. Până atunci, `portals.py` și `ejobs.py` nu se rulează în producție; sursele rămân ANOFM + site-urile firmelor.
 3. Același lucru de verificat pentru Undelucram și Hipo.
+
+## posturi.gov.ro
+- robots.txt permite tot (verificat 2026-11-16). Nu am găsit termeni de reutilizare publicați, doar mențiunea că navigarea implică acceptarea termenilor.
+- Date publice de stat (H.G. 1336/2022), cea mai curată sursă nouă. Confirmați cu ANFP (posturi@gov.ro) dacă vreți certitudine.
+- Ritm: 3 s între cereri; ~24 anunțuri/pagină, ~3.000 anunțuri active => cca. 2,5 ore.
