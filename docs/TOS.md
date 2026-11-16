@@ -1,4 +1,4 @@
-﻿# ToS: eJobs / BestJobs (stare la 2026-11-16)
+# ToS: eJobs / BestJobs (stare la 2026-11-16)
 
 Nu e aviz juridic. Decizia aparține asociației.
 
@@ -8,11 +8,12 @@ Nu e aviz juridic. Decizia aparține asociației.
 - `robots.txt` permite accesul (verificat), dar termenii sunt mai stricți decât robots.txt.
 - **Concluzie:** `scraper/portals.py` (BestJobs) intră în conflict cu pct. 3. Nu se rulează fără acordul scris al BestJobs sau acces la API-ul lor.
 
-## eJobs (https://www.ejobs.ro)
-- Pagina de termeni **nu a putut fi citită** (accesul automat la pagină a fost blocat; nu am ocolit blocajul).
-- `robots.txt` permite sitemap-urile de anunțuri (verificat), dar termenii nu au fost verificați.
-- **Concluzie:** necunoscut. Cineva trebuie să citească manual termenii eJobs înainte de a rula `scraper/ejobs.py`.
-
+## eJobs (termeni actualizați 02.10.2026, citiți din textul complet)
+- **Pct. 7.5:** interzise mijloacele automate (script-uri, roboți, bot, spider, crawler). Preluarea sistematică de conținut sau date și extragerea de text și date, inclusiv indexarea și colectarea de conținut, sunt interzise fără acordul scris prealabil.
+- **Pct. 7.3:** baza de date de CV-uri și anunțuri e protejată (drept sui generis, Legea 8/1996). Extragerea sau reutilizarea unei părți substanțiale, inclusiv a anunțurilor, e interzisă fără acord scris.
+- **Pct. 7.2:** reproducerea informațiilor din anunțurile de recrutare, integral sau parțial, e interzisă fără acord scris. Cererile de permisiune se trimit la contact@ejobs.ro.
+- `robots.txt` permite sitemap-urile, dar termenii interzic explicit exact ce face `scraper/ejobs.py`.
+- **Concluzie:** `ejobs.py` nu se rulează fără acord scris de la eJobs.
 ## Recomandare
 1. Cerere de acord/API către BestJobs și eJobs (dacă asociația are relații cu ele).
 2. Până atunci, `portals.py` și `ejobs.py` nu se rulează în producție; sursele rămân ANOFM + site-urile firmelor.
