@@ -68,7 +68,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--interval", type=float, default=3.0)
     ap.add_argument("--max-ads", type=int, default=0)
     ap.add_argument("--skip-urls", help="file with URLs already done (one per line): resume")
+    ap.add_argument("--i-have-written-permission", action="store_true",
+                    help="obligatoriu: termenii site-ului interzic colectarea automata fara acord scris (vezi docs/TOS.md)")
     args = ap.parse_args(argv)
+    if not args.i_have_written_permission:
+        print("Refuz: termenii eJobs (termenii 7.2, 7.3, 7.5) interzic colectarea automata fara acord scris. "
+              "Vezi docs/TOS.md. Cu acord scris, adauga --i-have-written-permission.")
+        return 2
     net = N.Net(interval=args.interval, timeout=40, retries=1)
     t0 = time.time()
     urls = sitemap_ads(net.get)

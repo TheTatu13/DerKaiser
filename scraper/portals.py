@@ -105,7 +105,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--interval", type=float, default=3.0)
     ap.add_argument("--max-firms", type=int, default=0)
+    ap.add_argument("--i-have-written-permission", action="store_true",
+                    help="obligatoriu: termenii site-ului interzic colectarea automata fara acord scris (vezi docs/TOS.md)")
     args = ap.parse_args(argv)
+    if not args.i_have_written_permission:
+        print("Refuz: termenii BestJobs (termenii pct. 3) interzic colectarea automata fara acord scris. "
+              "Vezi docs/TOS.md. Cu acord scris, adauga --i-have-written-permission.")
+        return 2
     net = N.Net(interval=args.interval, timeout=40, retries=1)
     t0 = time.time()
     slugs = load_slugs(net.get)

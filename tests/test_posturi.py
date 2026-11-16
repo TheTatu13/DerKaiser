@@ -17,18 +17,31 @@ def test_ad_links_dedupes_and_absolutizes():
     assert P.ad_links(html) == ["https://posturi.gov.ro/joburi/a-b/"]
 
 
-def test_listing_ads_stops_on_empty_or_repeated_page():
-    pages = {P.LISTING.format(page=1): '<a href="/joburi/a/">', P.LISTING.format(page=2): '<a href="/joburi/b/">',
-             P.LISTING.format(page=3): '<a href="/joburi/b/">'}
-    assert P.listing_ads(lambda u: pages[u]) == ["https://posturi.gov.ro/joburi/a/", "https://posturi.gov.ro/joburi/b/"]
+def test_listing_ads_tolerates_overlapping_pages_then_stops():
+    pages = {1: "a", 2: "b", 3: "a", 4: "c", 5: "c", 6: "c"}
 
-
-def test_listing_ads_survives_fetch_error():
     def get(u):
-        if u.endswith("pg_page=2"):
+        n = int(u.rsplit("=", 1)[1])
+        return f'<a href="/joburi/{pages[n]}/">' if n in pages else '<a href="/joburi/c/">'
+    got = P.listing_ads(get, max_stale=3)
+    assert got == [f"https://posturi.gov.ro/joburi/{x}/" for x in "abc"]
+
+
+def test_listing_ads_retries_failed_page():
+    calls = {"n": 0}
+
+    def get(u):
+        if u.endswith("pg_page=2") and calls["n"] < 2:
+            calls["n"] += 1
             raise OSError("boom")
-        return '<a href="/joburi/a/">'
-    assert P.listing_ads(get) == ["https://posturi.gov.ro/joburi/a/"]
+        return {"1": '<a href="/joburi/a/">', "2": '<a href="/joburi/b/">'}.get(u[-1], "")
+    assert P.listing_ads(get, pause=lambda s: None) == ["https://posturi.gov.ro/joburi/a/", "https://posturi.gov.ro/joburi/b/"]
+
+
+def test_listing_ads_gives_up_after_repeated_failures():
+    def get(u):
+        raise OSError("down")
+    assert P.listing_ads(get, max_failures=3, pause=lambda s: None) == []
 
 
 def test_parse_ad():

@@ -27,19 +27,29 @@ def ad_links(listing_html: str) -> list[str]:
     return out
 
 
-def listing_ads(get, *, max_pages: int = 400) -> list[str]:
-    """Ad URLs from every listing page, until a page brings nothing new."""
-    seen, out = set(), []
-    for page in range(1, max_pages + 1):
+def listing_ads(get, *, max_pages: int = 400, max_failures: int = 5, max_stale: int = 8, pause=None) -> list[str]:
+    """Ad URLs from every listing page. The site's pages overlap, so the walk ends only after ``max_stale`` pages in a
+    row bring nothing new; a failed page is retried (``max_failures`` in a row end it)."""
+    import time
+    pause = pause if pause is not None else time.sleep
+    seen, out, failures, stale, page = set(), [], 0, 0, 1
+    while page <= max_pages:
         try:
             links = ad_links(get(LISTING.format(page=page)))
-        except Exception:  # noqa: BLE001 - one broken page ends the walk with what we have
-            break
+        except Exception:  # noqa: BLE001
+            failures += 1
+            if failures >= max_failures:
+                break
+            pause(10 * failures)
+            continue
+        failures = 0
         fresh = [u for u in links if u not in seen]
-        if not fresh:
+        stale = 0 if fresh else stale + 1
+        if stale >= max_stale:
             break
         seen.update(fresh)
         out.extend(fresh)
+        page += 1
     return out
 
 

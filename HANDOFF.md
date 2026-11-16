@@ -1,4 +1,4 @@
-﻿# DerKaiser â€” predare pentru testare
+# DerKaiser â€” predare pentru testare
 
 Scraper local, multi-firmÄƒ, derivat din È™ablonul Brewtality 3:16. **Dry-run: nu scrie nimic Ã®n peViitor/Solr.**
 PorneÈ™te de la firmÄƒ (CIF din ANOFM), Ã®i gÄƒseÈ™te site-ul È™i anunÈ›urile (fiecare cu linkul ei) È™i completeazÄƒ cu portaluri.
@@ -25,8 +25,8 @@ fiÈ™iere de ieÈ™ire append-only (reluabile), cache pe disc.
 ```
 py -m pytest tests -q                                   # 519 teste, offline
 py -m scraper.derkaiser --jobs docs.jsonl --out out --workers 8 --interval 3 --learn --no-render --recipes recipes
-py -m scraper.portals   --docs docs.jsonl --out portal_jobs.jsonl --interval 3     # BestJobs pe firme
-py -m scraper.ejobs     --out ejobs_jobs.jsonl --interval 3                        # reia cu --skip-urls <fisier>.done
+py -m scraper.portals   --docs docs.jsonl --out portal_jobs.jsonl --interval 3 --i-have-written-permission   # BestJobs: NU fără acord scris
+py -m scraper.ejobs     --out ejobs_jobs.jsonl --interval 3 --i-have-written-permission   # eJobs: NU fără acord scris
 py -m scraper.cc        --docs out/docs_with_jobs.jsonl --out cc_jobs.jsonl --crawls 4
 py -m scraper.merge --src anofm=out/jobs.jsonl --src bestjobs=portal_jobs.jsonl --src ejobs=ejobs_jobs.jsonl --out all_distinct.jsonl
 ```
