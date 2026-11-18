@@ -90,15 +90,18 @@ def run(firms: list[dict], get, out_path: str, *, workers: int = 4, on_firm=None
         pass
     todo = [f for f in firms if f["id"] not in done]
     found = 0
+    chunk = max(1, workers * 10)  # write results every chunk, so a crash or sleep loses at most one chunk
     with open(out_path, "a", encoding="utf-8") as out, ThreadPoolExecutor(max_workers=workers) as pool:
-        for firm, site in zip(todo, pool.map(lambda f: _safe_find(f, get, resolves), todo)):
-            doc = {"id": firm["id"], "company": firm["company"], "employees": firm["employees"],
-                   "website": [site] if site else []}
-            out.write(json.dumps(doc, ensure_ascii=False) + "\n")
+        for i in range(0, len(todo), chunk):
+            part = todo[i:i + chunk]
+            for firm, site in zip(part, pool.map(lambda f: _safe_find(f, get, resolves), part)):
+                doc = {"id": firm["id"], "company": firm["company"], "employees": firm["employees"],
+                       "website": [site] if site else []}
+                out.write(json.dumps(doc, ensure_ascii=False) + "\n")
+                found += bool(site)
+                if on_firm:
+                    on_firm(firm, site)
             out.flush()
-            found += bool(site)
-            if on_firm:
-                on_firm(firm, site)
     return {"firms": len(todo), "skipped_done": len(done), "with_site": found}
 
 
@@ -124,9 +127,10 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     rows = (json.loads(l) for l in open(args.firms, encoding="utf-8") if l.strip())
     firms = list(firms_from_rows(rows, min_employees=args.min_employees))
+    firms.sort(key=lambda f: -f["employees"])  # biggest employers first: they are the ones with career pages
     if args.max_firms:
         firms = firms[: args.max_firms]
-    net = N.Net(interval=args.interval, timeout=15, retries=0)
+    net = N.Net(interval=args.interval, timeout=8, retries=0)
     n = {"i": 0}
 
     def progress(firm, site):

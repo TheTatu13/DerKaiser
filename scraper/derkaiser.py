@@ -54,7 +54,7 @@ def main(argv: list[str] | None = None) -> int:
 
         from .render import Renderer
 
-        net = Net(interval=args.interval, cache_dir=args.cache)
+        net = Net(interval=args.interval, cache_dir=args.cache, max_bytes=40_000_000)  # big ATS feeds must not be cut (invalid JSON)
         renderer = None if args.no_render else Renderer(allowed=net.allowed, max_parallel=args.render_parallel)
         if renderer is not None and not renderer.available:
             print("no Chrome/Edge found: JavaScript rendering is off (set DERKAISER_BROWSER to a browser .exe)")

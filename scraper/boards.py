@@ -46,7 +46,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--interval", type=float, default=3.0)
     args = ap.parse_args(argv)
     config = json.load(open(args.config, encoding="utf-8-sig"))
-    net = N.Net(interval=args.interval, timeout=40, retries=1)
+    # ATS feeds can be huge (Lever: aleph 2 MB, weloglobal 7 MB, tsmg 35 MB); a truncated body is invalid JSON and gave 0 jobs
+    net = N.Net(interval=args.interval, timeout=120, retries=1, max_bytes=60_000_000)
     jobs = fetch_boards(config, net.get, net.post_json, on_board=lambda k, c, n: print(f"{k:11} {c:22} {n}", flush=True))
     with open(args.out, "w", encoding="utf-8") as f:
         for j in jobs:

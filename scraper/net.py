@@ -26,6 +26,7 @@ from urllib.parse import urlsplit
 
 USER_AGENT = "DerKaiser-peViitor/0.1 (volunteer project; github.com/thetatu13)"
 RETRY_STATUS = {429, 500, 502, 503, 504}
+MAX_READ = 64_000_000
 
 # Brewtality's expiry phrases + Romanian ones
 EXPIRED_MARKERS = (
@@ -61,7 +62,7 @@ Opener = Callable[[urllib.request.Request, float], "tuple[int, dict, bytes]"]
 def urllib_opener(req: urllib.request.Request, timeout: float) -> tuple[int, dict, bytes]:
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return resp.status, dict(resp.headers.items()), resp.read(2_000_000)
+            return resp.status, dict(resp.headers.items()), resp.read(MAX_READ)  # the per-request cap is Net.max_bytes (applied after); this is only a hard ceiling
     except urllib.error.HTTPError as exc:
         return exc.code, dict(exc.headers.items()) if exc.headers else {}, b""
 
