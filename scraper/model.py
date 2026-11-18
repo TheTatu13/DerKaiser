@@ -151,7 +151,9 @@ def verify_site(domain: str, company: str, get: Callable[[str], str], *, strict_
             cif = str(strict_cif).lstrip("0")
             named = full in flat or (len(tokens) > 1 and all(t in text for t in tokens))
             has_cif = bool(cif) and re.search(r"(?<!\d)(ro)?\s*" + re.escape(cif) + r"(?!\d)", text) is not None
-            if named and (has_cif or (domain.endswith(".ro") and "romania" in text)):
+            others = {n.lstrip("0") for n in re.findall(r"(?<![\w])(?:cui|cif|c\.u\.i\.?|ro)\s*:?\s*(\d{3,10})(?!\d)", text)}
+            foreign_cif = bool(others) and cif not in others  # the page states another firm's CUI: same name, other firm
+            if named and not foreign_cif and (has_cif or (domain.endswith(".ro") and "romania" in text)):
                 return url
             continue
         if any(t in label for t in tokens) or full in flat or (len(tokens) > 1 and all(t in text for t in tokens)):
