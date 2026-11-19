@@ -80,3 +80,10 @@ Acum `Net.max_bytes` decide (boards: 60 MB). `boards.py`: 185 -> 250 joburi.
 - Volumul (70.000) cere eJobs/BestJobs/Undelucram/OLX/Publi24: termenii lor interzic preluarea automata fara acord scris (`docs/TOS.md`); draft de cerere in `docs/CERERI_ACORD.md`.
 - `scraper/jooble.py`: sursa prin API-ul Jooble (cheie gratuita de la ro.jooble.org/api/about), netestata cu cheie reala; de verificat termenii lor inainte de republicare.
 - Scrierea in inviitor.ro (Solr/baza lor) ramane dezactivata pana la aprobare sau mediu de test.
+
+## Reparatii si unelte (2026-11-19)
+- `quality.py`: `TRANSFER(SOSIRE)` = activ; CAEN 6820, cooperativele si "alte forme juridice" sunt admise (doar 6420 ramane exclus).
+- `model.verify_site`: CIF-ul se cauta si pe /contact, /despre-noi, /termeni-si-conditii, /politica-de-confidentialitate (cu context CUI/CIF/Cod fiscal).
+- `model.best_city`: adresa ANOFM ("Judet > Municipiul X > X SECT 1") se transforma in cel mai specific oras acceptat; sectoarele Bucurestiului devin Bucuresti.
+  Datele deja exportate (8.631 joburi) pastreaza vechea locatie "Romania" pentru ~4.800 de joburi ANOFM pana la o noua rulare ANOFM.
+- `tools/export_csv.py OUT.csv IN.jsonl [...]`: JSONL-urile de joburi -> CSV (titlu, firma, cif, locatie, judet, remote, link, sursa), fara linkuri duplicate.

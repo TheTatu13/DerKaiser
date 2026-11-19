@@ -83,11 +83,42 @@ def anofm_rows(cif, post: Callable[[str, dict], dict]) -> list[dict]:
     return (post(ANOFM_URL, body) or {}).get("rows") or []
 
 
+_PREFIXES = ("municipiul ", "orasul ", "oras ", "comuna ", "sectorul ", "judetul ")
+_FOLDED_CITIES = {}
+_AS_LISTED = {c.lower(): c for c in ROMANIAN_CITIES}
+
+
+def _fold(text: str) -> str:
+    return re.sub(r"\s+", " ", unicodedata.normalize("NFKD", text or "").encode("ascii", "ignore").decode().lower()).strip()
+
+
+def best_city(parts: list[str]) -> str:
+    """Most specific part of an ANOFM address ('County > Municipiul X > X SECT 1') that is a city peViitor's model accepts.
+
+    Bucharest sectors ('BUCURESTI SECT 1') count as Bucharest. Returns '' when no part is an accepted city
+    (the model then falls back to 'Romania'); the contract only allows its list of cities."""
+    if not _FOLDED_CITIES:
+        for c in ROMANIAN_CITIES:
+            _FOLDED_CITIES.setdefault(_fold(c), c)
+    for part in reversed([p for p in parts if p]):
+        if part.strip().lower() in _CITY_SET:  # already an accepted spelling: use the list's own casing
+            return _AS_LISTED[part.strip().lower()]
+        folded = _fold(part)
+        for prefix in _PREFIXES:
+            if folded.startswith(prefix):
+                folded = folded[len(prefix):]
+        if folded.startswith("bucuresti"):
+            folded = "bucuresti"
+        if folded in _FOLDED_CITIES:
+            return _FOLDED_CITIES[folded]
+    return ""
+
+
 def parse_anofm(data: dict) -> list[dict]:
     out = []
     for row in (data or {}).get("rows") or []:
         parts = [p.strip() for p in (row.get("address_locality_name") or "").split(">")]
-        location = parts[-1] if len(parts) > 1 else (parts[0] if parts else "")
+        location = best_city(parts)
         job_id = row.get("id")
         if not job_id or not row.get("occupation"):
             continue
