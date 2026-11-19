@@ -1,106 +1,115 @@
-# DerKaiser
+<h1 align="center">DerKaiser</h1>
 
-Scraper Python care construieste, pentru peViitor.ro, documente de **firma** (dupa CIF) si gaseste **joburile** fiecarei firme,
-fiecare cu linkul propriului anunt. Derivat din Brewtality 3:16. **Local, dry-run: nu scrie nimic in Solr** pana nu exista
-endpoint si autentificare aprobate.
+<p align="center">
+  Scraper local, <b>dry-run</b>, pentru joburile firmelor din România — construit pentru
+  <a href="https://peviitor.ro">peViitor.ro</a>.<br>
+  Pornește de la o firmă (CIF), îi găsește site-ul și anunțurile, fiecare cu linkul ei, apoi completează cu surse publice.
+</p>
 
-## Ce face
+<p align="center">
+  <img alt="teste" src="https://img.shields.io/badge/teste-536%20trec-brightgreen">
+  <img alt="python" src="https://img.shields.io/badge/python-3-blue">
+  <img alt="mod" src="https://img.shields.io/badge/mod-dry--run-orange">
+  <img alt="licență" src="https://img.shields.io/badge/licen%C8%9B%C4%83-MIT-lightgrey">
+</p>
 
-1. **Descopera CIF-uri** (CUIFirma si CUIScan se completeaza reciproc, pornind de la judete / cuvinte din nume).
-2. **Filtreaza prin ANAF** (100 CIF / cerere): firma activa, nu inactiva fiscal, forma juridica de societate (fara PFA/II/IF),
-   CAEN diferit de 6420 (holdinguri) si 6820 (inchirieri proprii).
-3. **Verifica salariatii** (CUIScan `financials`): >= 1 salariat, cifra de afaceri > 0, bilant din ultimii 3 ani.
-4. **Construieste documentul de firma** (11 campuri, id = CIF cu 8 cifre) si aplica regula "doar active".
-5. **Gaseste joburile** firmei: feed-uri publice ATS (Greenhouse, Lever, Workable, Recruitee, SmartRecruiters, Personio),
-   altfel date `JobPosting` din paginile de cariere. Un job fara link valid de anunt se arunca. Firmele fara joburi se pastreaza
-   (`existingJobsCount = [0]`).
-6. **Reconciliaza** cu documentele existente (create / update / skip / conflict pentru id nepadat); nu atinge niciodata
-   documentele altui scraper.
+> **Nu scrie nimic în peViitor/Solr.** Scrierea e dezactivată (`confirm=False`) până există endpoint, autentificare și aprobarea asociației.
 
-## Rulare (totul local, reluabil; pauze lente intentionat)
+---
 
-```powershell
-py -m scraper.derkaiser --discover --out run_discovery --max 600        # 1. CIF-uri noi
-py -m scraper.derkaiser --screen --out run_discovery                    # 2. ANAF
-py -m scraper.derkaiser --financials --out run_discovery                # 3. salariati (1 cerere / 60 s)
-py -m scraper.derkaiser --cifs run_discovery/cifs_final.txt --out run_docs      # 4. documente de firma
-py -m scraper.derkaiser --jobs run_docs/docs.jsonl --out run_docs [--websites siteuri.csv]   # 5. joburi
+## Rezultate
+
+Rularea finală, doar din surse publice și permise:
+
+| Sursă | Joburi distincte |
+|---|---:|
+| ANOFM (API public, după CIF) | 7.242 |
+| posturi.gov.ro (ANFP, sectorul public) | 1.132 |
+| Career boards ATS verificate (Greenhouse, Lever, Workable, Workday) | 257 |
+| **Total** | **~8.600** (de la ~4.200 de firme) |
+
+Fiecare job are propriul link de anunț. Lista e în `derkaiser_joburi.csv` (generată local, nu e în repo).
+
+> **Ținta de 70.000 nu e atinsă cu surse legale.** Joburile mari stau pe eJobs, BestJobs, Undelucram, OLX și Publi24, iar
+> termenii lor interzic preluarea automată fără acord scris. Detalii în [`docs/TOS.md`](docs/TOS.md);
+> draft de cerere în [`docs/CERERI_ACORD.md`](docs/CERERI_ACORD.md).
+
+## Cum funcționează
+
+Straturi care se înlocuiesc unul pe altul, de la cel mai precis la cel mai larg („păpușile rusești"). Dacă un strat nu găsește
+nimic sau rezultatul pare suspect, preia următorul:
+
+```
+rețetă învățată pe firmă  →  feed-uri ATS publice  →  JSON-LD JobPosting  →  listare generică  →  randare JS (opțional)
+                                         + ANOFM, adăugat mereu
 ```
 
-`--websites` e un CSV `cif,website`, pentru firmele al caror document nu are `website` (sursele de CIF nu il dau).
-
-## Limite respectate
-
-| Sursa | Limita | Ritm implicit |
+| Strat | Fișier | Ce citește |
 |---|---|---|
-| CUIScan | 100 cereri / ora / IP | 1 / 60 s, buget 60 / ora |
-| CUIFirma | 60 cereri / minut | 1 / 6 s |
-| ANAF `PlatitorTvaRest/v9` | 1 cerere / s, 100 CUI / cerere | 1 / 1,5 s |
-| site-uri de firme / ATS | fara limita publica | 1 / 2 s, user-agent propriu |
+| ANOFM | `model.py` | API-ul public mediere.anofm.ro, după CIF |
+| Rețetă | `engine.py`, `learn.py` | `recipes/<cif>.json`: pagini de carieră, regex de link, paginare; se reînvață când site-ul se schimbă |
+| ATS | `jobs.py`, `workday.py` | Greenhouse, Lever, Workable, Recruitee, SmartRecruiters, Personio, Workday |
+| JSON-LD / listare | `jobs.py` | `JobPosting`; linkurile din listări sunt confirmate pe pagina anunțului |
+| Randare JS | `render.py` | Chrome/Edge deja instalat (`--headless`), opțional |
+| Stat | `posturi.py` | posturi.gov.ro (ANFP) |
+| Boards ATS | `boards.py` | `config/ats_boards.json`: pagini de carieră verificate manual |
+| Firme → site | `bridge.py` | găsește și **verifică** site-ul firmei (nume + CIF pe pagină) |
+| Agregator | `jooble.py` | API-ul Jooble (necesită cheie gratuită; netestat cu cheie reală) |
+| Deduplicare | `merge.py` | pe link normalizat și pe (firmă, titlu, oraș) |
 
-Descoperirea si verificarea de salariati impart bugetul CUIScan: nu le rula in acelasi timp.
+`portals.py` (BestJobs) și `ejobs.py` (eJobs) există, dar **refuză să ruleze** fără `--i-have-written-permission`.
 
-## Ce lipseste (nu poate fi facut singur)
-
-- Endpoint Solr de scriere, autentificare si schema job confirmata (Sebi). `publish.send_jobs` exista, refuza fara `confirm=True`
-  si nu a fost incercat pe API-ul real.
-- Sursa pentru `website` (CUIScan/ANAF nu il au).
-- Formele payload-ului pentru Workable, Recruitee, SmartRecruiters, Personio sunt din referinte comunitare: de verificat pe un
-  raspuns real inainte de incredere (Greenhouse si Lever urmeaza codul flotei).
-- Termenii CUIFirma interzic "scraping masiv": ritmul e lent, dar merita confirmare.
-
-## Teste
+## Pornire rapidă
 
 ```powershell
-py -m pytest tests -q --ignore=tests/test_browser.py -k "not consistency and not e2e and not integration"
+py -m pytest tests -q                                           # 536 teste, offline
+
+# joburile unor firme (docs.jsonl: {"id": "<CIF 8 cifre>", "company": "...", "website": []})
+py -m scraper.derkaiser --jobs docs.jsonl --out out --workers 8 --interval 3 --learn --no-render --recipes recipes
+
+py -m scraper.posturi --out posturi_jobs.jsonl --interval 3     # sectorul public
+py -m scraper.boards  --out boards_jobs.jsonl                   # career boards ATS
+py -m scraper.merge --src anofm=out/jobs.jsonl --src posturi=posturi_jobs.jsonl --src ats=boards_jobs.jsonl --out all_distinct.jsonl
 ```
 
-Detalii de stare si decizii: `DERKAISER.md`, planul pe faze: `ROADMAP.md`.
+Totul e reluabil (fișiere append-only), citește doar și lucrează lent intenționat.
 
-## Quick start
+### Pipeline pe firme (de la datele Ministerului Finanțelor la joburi)
 
-Vezi sectiunea 'Rulare' de mai sus (python -m scraper.derkaiser --help). Totul e dry-run implicit; scrierea in peViitor cere confirm=True.
+```powershell
+powershell -File tools\firms_pipeline.ps1
+```
 
-## Layout
+Listele „Situații financiare 2024" de pe data.gov.ro → filtru (≥ 3 angajați, cifră de afaceri > 0, fără CAEN 6420/6820) →
+ANAF (activă, formă juridică de societate) → `bridge` (site verificat) → `derkaiser --jobs` doar pe firmele cu site.
 
-- scraper/ - discovery, ANAF, financials, jobs (+ model.py: formatul Brewtality, ANOFM), publish.py
-- tests/ - teste unitare offline
+Pilotul a arătat că metoda nu aduce volum: din 274 de firme mici, 28 au site și 0 joburi pe el; din 60 de firme cu peste
+250 de angajați, 11 au site și doar 13 joburi de pe site-uri. Firmele își publică posturile pe portaluri, nu pe site-ul propriu.
 
-## License
+## Plase de siguranță
+
+Reîncercări cu backoff și `Retry-After` · pauză pe host (implicit 3 s) · circuit breaker pe host · `robots.txt` respectat ·
+buget de cereri și timp pe firmă · `try/except` pe fiecare strat · verificare de sanitate (fără 90% titluri identice) ·
+listă de gazde permise · validarea Brewtality · verificare live a fiecărui link · fișiere de ieșire append-only · cache pe disc.
+
+## Limite
+
+- **Surse cu termeni restrictivi:** eJobs, BestJobs, Undelucram, OLX, Publi24 — vezi [`docs/TOS.md`](docs/TOS.md).
+- Fără randare JS, site-urile cu anunțuri doar în JavaScript, PDF sau pe platforme interzise rămân doar cu ANOFM.
+- Formele de payload pentru Workable, Recruitee, SmartRecruiters și Personio vin din referințe comunitare; de verificat pe răspunsuri reale.
+- Scrierea în peViitor nu a fost încercată pe API-ul real.
+
+## Structura proiectului
+
+```
+scraper/   motorul (engine, jobs, workday, posturi, boards, bridge, merge, ...)
+config/    ats_boards.json — career boards verificate
+docs/      TOS.md (stare termeni), CERERI_ACORD.md (draft cereri către portaluri)
+tools/     scripturile pipeline-ului pe firme
+tests/     teste unitare offline
+HANDOFF.md predare: cum rulezi fiecare modul, ce e verificat și ce nu, deciziile asociației
+```
+
+## Licență
 
 MIT
-
-
-## Motorul de joburi (păpușile ruse)
-
-`--jobs` rulează `scraper/engine.py`: scrapere încuiate unul într-altul, de la cel mai mic la cel mai larg. Fiecare e complet de sine stătător; dacă nu găsește nimic, greșește sau rezultatul arată suspect, preia următorul:
-
-1. **recipe** - rețetă per firmă (`recipes/<CIF>.json`): ATS+slug sau pagini de carieră + regex de link.
-2. **ats** - feeduri ATS publice găsite pe paginile de carieră.
-3. **jsonld** - `JobPosting` schema.org.
-4. **listing** - generic: linkuri de anunț de pe paginile de carieră, fiecare CONFIRMAT pe propria pagină (JSON-LD sau titlu potrivit cu URL-ul + cuvinte de anunț).
-
-ANOFM nu e strat: se adaugă mereu (joburi după CIF + domeniul firmei din `contact_email`, verificat pe homepage).
-
-Plase de siguranță: retry cu backoff și `Retry-After`; ritm per host (`--interval`, implicit 3 s) cu firme în paralel (`--workers`); circuit breaker per host; robots.txt; buget de cereri și timp per firmă; fiecare strat în propriul try/except; verificare de sanitate (fără inundații cu același titlu); doar linkuri de pe site-ul firmei / ATS / ANOFM; regulile de validare Brewtality; verificare live GET + markere de expirare; canary de istoric (`suspect_zero`); rezultate append-only, reluabile; cache de pagini (`--cache`). Totul dry-run.
-
-Limite: HTML static (fără randare JavaScript); site-urile cu anunțuri doar în JS, PDF sau pe platforme interzise rămân doar cu ANOFM.
-
-### Randare JavaScript si website
-
-Cand straturile statice nu gasesc nimic, motorul randeaza paginile de cariera cu Chrome/Edge deja instalat (headless, nimic de instalat; dezactivare: --no-render, alt browser: DERKAISER_BROWSER). Website-ul firmei: dat manual > domeniul din contact_email ANOFM (verificat pe homepage) > ghicit din nume (verificare stricta: numele complet + CIF sau .ro + 'romania' pe pagina).
-
-
-## DerKaiser overview
-
-DerKaiser is a local, dry-run multi-company job engine for peViitor.ro, built on the Brewtality 3:16 template.
-It starts from a company (CIF from ANOFM), finds the company's website, then its job ads (each with its own link),
-and complements them with job portals. **It never writes to peViitor/Solr** (`confirm=False` is the default guard).
-
-Source layers, smallest doll first: learned per-firm recipe -> public ATS feeds (Greenhouse, Lever, Workable, Recruitee,
-SmartRecruiters, Personio, Workday) -> JSON-LD `JobPosting` -> generic listing scraper -> optional JavaScript rendering;
-ANOFM is always added. Separate modules: `portals.py` (BestJobs, firm first), `ejobs.py` (eJobs sitemaps), `cc.py`
-(Common Crawl), `merge.py` (deduplication across sources).
-
-See [HANDOFF.md](HANDOFF.md) for how to run each module, what is verified and what is not, and the decisions that belong to
-the association (portal terms of service, the 70,000 target, writing to production). Tests: `py -m pytest tests -q`.
