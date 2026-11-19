@@ -18,7 +18,8 @@ EXCLUDED_CAEN = {"6420"}  # 6820 (own-property rental) was excluded until 2026-1
 # TRANSFER(SOSIRE) = the firm moved its registered office into a new county and keeps operating (Catena Pharma, Nemak, Nobel Automotive ...)
 ACTIVE_PREFIXES = ("INREGISTRAT", "REINREGISTRAT", "RELUARE ACTIVITATE", "TRANSFER(SOSIRE)")
 # forma_juridica must look like a company, not a person.
-COMPANY_WORDS = ("SOCIETATE", "COMPANIE", "REGIE")
+# 2026-11-19: cooperatives and "alte forme juridice" (research institutes, agro-industrial combines ...) are real employers: admitted
+COMPANY_WORDS = ("SOCIETATE", "COMPANIE", "REGIE", "ORGANIZATIE COOPERATISTA", "ALTE FORME JURIDICE")
 _NAME_PERSON = re.compile(
     r"(INTREPRINDERE\s+(INDIVIDUALA|FAMILIALA)|PERSOANA\s+FIZICA|\bPFA\b|\bP\.F\.A\b)"
     r"|(?:^|\s)(PF|AF|II|IF)\s*$"
