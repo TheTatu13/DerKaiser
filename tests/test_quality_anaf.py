@@ -47,7 +47,8 @@ def test_sa_and_regie_pass():
 
 def test_excluded_caen_configurable():
     assert q.assess_anaf(_rec(caen="6420")) == ["caen_exclus:6420"]
-    assert q.assess_anaf(_rec(caen="6820")) == ["caen_exclus:6820"]
+    assert q.assess_anaf(_rec(caen="6820")) == []  # re-admitted 2026-11-19
+    assert q.assess_anaf(_rec(caen="6420")) == ["caen_exclus:6420"]
     assert q.assess_anaf(_rec(caen="6420"), excluded_caen=frozenset()) == []
 
 

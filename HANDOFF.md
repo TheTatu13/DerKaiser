@@ -62,7 +62,7 @@ accesul la indexul Common Crawl, 2 rețete învățate corect (Valrom, Carrefour
 
 ## Pipeline pe firme (rulat 2026-11-19, rezultate)
 `tools/firms_pipeline.ps1` (ruleaza din radacina repo-ului, reluabil): listele Ministerului Finantelor (data.gov.ro, "Situatii financiare 2024": `CUI,CAEN,I1..I20`,
-I13 = cifra de afaceri, I20 = nr. mediu de angajati) -> filtrare (>= 3 angajati, cifra > 0, fara CAEN 6420/6820) -> ANAF (`anaf_batch.py`, activ, SRL/SA etc.) ->
+I13 = cifra de afaceri, I20 = nr. mediu de angajati) -> filtrare (>= 3 angajati, cifra > 0, fara CAEN 6420) -> ANAF (`anaf_batch.py`, activ, SRL/SA etc.) ->
 `scraper.bridge` (gaseste si VERIFICA site-ul: numele firmei + CIF pe pagina) -> `scraper.derkaiser --jobs` doar pe firmele cu site.
 Scripturile auxiliare sunt in `tools/firms_*.py` (cai relative la radacina repo-ului; datele in `run_firme/`, ignorate de git).
 

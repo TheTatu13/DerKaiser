@@ -9,7 +9,7 @@ for fn in ("run_firme/bilant2024.txt","run_firme/uu2024.txt"):
             try: emp=int(float(r["I20"] or 0)); turn=float(r["I13"] or 0)
             except ValueError: continue
             cui=r["CUI"].strip()
-            if emp>=3 and turn>0 and r["CAEN"] not in ("6420","6820") and cui:
+            if emp>=3 and turn>0 and r["CAEN"] != "6420" and cui:
                 rows[cui.zfill(8)]={"cui":cui,"caen":r["CAEN"],"employees":emp,"turnover":r["I13"]}
 print("ge3 firms:",len(rows))
 new=[c for c in rows if c not in screened]

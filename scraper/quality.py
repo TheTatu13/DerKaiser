@@ -4,7 +4,7 @@ Stage 1 (this module, from ANAF data, free and fast): a firm fails if ANY gate f
 Stage 2 (CUIScan, slow): employees >= 1 and a recent balance sheet (see ``assess_financials``).
 
 Decided with Mihai (2026-11-13): sole traders (PFA/II/IF/AF/PF) are out; holdings (CAEN 6420)
-and own-property rental (CAEN 6820) are out; firms without jobs are kept (they may publish later).
+are out (own-property rental, CAEN 6820, was re-admitted 2026-11-19); firms without jobs are kept (they may publish later).
 Every gate returns a short reason string, so a report can say *why* a firm was dropped.
 """
 
@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 import unicodedata
 
-EXCLUDED_CAEN = {"6420", "6820"}
+EXCLUDED_CAEN = {"6420"}  # 6820 (own-property rental) was excluded until 2026-11-19: Mihai decided to include it
 # ANAF "stare_inregistrare" texts that mean the firm operates.
 # TRANSFER(SOSIRE) = the firm moved its registered office into a new county and keeps operating (Catena Pharma, Nemak, Nobel Automotive ...)
 ACTIVE_PREFIXES = ("INREGISTRAT", "REINREGISTRAT", "RELUARE ACTIVITATE", "TRANSFER(SOSIRE)")
