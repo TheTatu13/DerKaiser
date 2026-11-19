@@ -2,7 +2,7 @@
 
 <p align="center">
   Scraper local, <b>dry-run</b>, pentru joburile firmelor din România — construit pentru
-  <a href="https://peviitor.ro">peViitor.ro</a>.<br>
+  <a href="https://inviitor.ro">inviitor.ro</a>.<br>
   Pornește de la o firmă (CIF), îi găsește site-ul și anunțurile, fiecare cu linkul ei, apoi completează cu surse publice.
 </p>
 
@@ -13,7 +13,7 @@
   <img alt="licență" src="https://img.shields.io/badge/licen%C8%9B%C4%83-MIT-lightgrey">
 </p>
 
-> **Nu scrie nimic în peViitor/Solr.** Scrierea e dezactivată (`confirm=False`) până există endpoint, autentificare și aprobarea asociației.
+> **Nu scrie nimic în inviitor.ro (Solr/baza lor).** Scrierea e dezactivată (`confirm=False`) până există endpoint, autentificare și aprobarea asociației.
 
 ---
 
@@ -92,12 +92,18 @@ Reîncercări cu backoff și `Retry-After` · pauză pe host (implicit 3 s) · c
 buget de cereri și timp pe firmă · `try/except` pe fiecare strat · verificare de sanitate (fără 90% titluri identice) ·
 listă de gazde permise · validarea Brewtality · verificare live a fiecărui link · fișiere de ieșire append-only · cache pe disc.
 
+## Format de ieșire
+
+`derkaiser_joburi.csv` și `*.jsonl`, cu câte un job pe rând: `titlu, firmă, cif, localitate, județ, remote, link, sursă`.
+Formatul intern al motorului e cel din șablonul Brewtality 3:16 (schema Solr peViitor); pentru alt import
+(API, alt format de câmpuri) se adaugă un convertor în `scraper/publish.py`, odată ce schema destinației e cunoscută.
+
 ## Limite
 
 - **Surse cu termeni restrictivi:** eJobs, BestJobs, Undelucram, OLX, Publi24 — vezi [`docs/TOS.md`](docs/TOS.md).
 - Fără randare JS, site-urile cu anunțuri doar în JavaScript, PDF sau pe platforme interzise rămân doar cu ANOFM.
 - Formele de payload pentru Workable, Recruitee, SmartRecruiters și Personio vin din referințe comunitare; de verificat pe răspunsuri reale.
-- Scrierea în peViitor nu a fost încercată pe API-ul real.
+- Scrierea în inviitor.ro nu a fost încercată pe API-ul real.
 
 ## Structura proiectului
 

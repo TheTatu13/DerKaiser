@@ -26,7 +26,7 @@ Nu e aviz juridic. Decizia aparține asociației.
 
 ## OLX.ro (conditii de utilizare iunie 2026, https://blog.olx.ro/wp-content/uploads/2026/06/Conditii-de-utilizare-Iunie.pdf)
 - **Pct. 2.3:** continutul site-ului, inclusiv anunturile, nu se poate folosi fara acord scris; agregarea si prelucrarea datelor pentru redistribuire pe alte site-uri e interzisa.
-- Nu apare cuvantul "scraping", dar pct. 2.3 acopera exact folosirea noastra (peViitor republica anunturile).
+- Nu apare cuvantul "scraping", dar pct. 2.3 acopera exact folosirea noastra (inviitor.ro republica anunturile).
 - Pct. 13.1: interzis sa afectezi functionarea serviciului sau sa-l folosesti abuziv. Citit in intregime doar partial (text trunchiat); clauzele 15.8 si 17.4/17.6 nu au fost verificate.
 - **Concluzie:** nu se scrapeaza fara acord scris de la OLX.
 

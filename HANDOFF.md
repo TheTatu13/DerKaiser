@@ -1,6 +1,6 @@
 # DerKaiser — predare pentru testare
 
-Scraper local, multi-firmă, derivat din șablonul Brewtality 3:16. **Dry-run: nu scrie nimic în peViitor/Solr.**
+Scraper local, multi-firmă, derivat din șablonul Brewtality 3:16. **Dry-run: nu scrie nimic în inviitor.ro (Solr/baza lor).**
 Pornește de la firmă (CIF din ANOFM), îi găsește site-ul și anunțurile (fiecare cu linkul ei) și completează cu portaluri.
 
 ## Ce face (de la mic la mare, „păpușa rusească")
@@ -38,7 +38,7 @@ py -m scraper.merge --src anofm=out/jobs.jsonl --src bestjobs=portal_jobs.jsonl 
 **Verificat live, pe eșantioane mici:** forma răspunsului Workday (un tenant real), ANOFM, BestJobs (profil + anunț, 15 firme), eJobs (14 anunțuri, 11 din România),
 accesul la indexul Common Crawl, 2 rețete învățate corect (Valrom, Carrefour).
 **Neverificat / limite:**
-- Nimic nu a fost trimis la peViitor; `send_jobs`/`send_company` nu au fost rulate pe API-ul real. Cere mediu de test sau acord.
+- Nimic nu a fost trimis la inviitor.ro; `send_jobs`/`send_company` nu au fost rulate pe API-ul real. Cere mediu de test sau acord.
 - Workday doar pe un tenant (NVIDIA); alte ATS-uri nu au fost verificate live de mine.
 - Common Crawl: 0 anunțuri pe 12 firme testate (puține firme au `JobPosting`); sweep-ul e lent.
 - Pe site-urile firmelor mici randamentul e mic (9 firme cu rezultat propriu din 630).
@@ -52,7 +52,7 @@ accesul la indexul Common Crawl, 2 rețete învățate corect (Valrom, Carrefour
 1. **ToS eJobs / BestJobs / Undelucram / Hipo:** (vezi `docs/TOS.md`: BestJobs interzice scraping-ul la pct. 3 din termeni; eJobs neverificat) `robots.txt` permite citirea anunțurilor (BestJobs, eJobs verificate), dar termenii pot interzice preluarea automată.
    Decizia aparține asociației. Modulele `ejobs.py` și `portals.py` citesc doar anunțuri publice, 3 s între cereri, păstrează doar titlu/firmă/oraș/link.
 2. **De unde vine ținta de 70.000?** ANOFM raportează ~30–35.000 de *locuri vacante* (posturi, nu anunțuri); noi am măsurat 8.141 anunțuri = 33.563 posturi.
-3. **Scriere în peViitor:** doar după mediu de test și aprobare; `confirm=True` e singurul comutator.
+3. **Scriere în inviitor.ro:** doar după mediu de test și aprobare; `confirm=True` e singurul comutator.
 4. **OLX:** blochează boții (403); nu a fost folosit. Agregatorii (Jooble, Jobrapido, Talent) nu au fost folosiți (duplicate, termeni stricți).
 
 ## Fișiere de date (nu sunt în pachet)
@@ -79,4 +79,4 @@ Acum `Net.max_bytes` decide (boards: 60 MB). `boards.py`: 185 -> 250 joburi.
 ## Ce ramane (decizii ale asociatiei)
 - Volumul (70.000) cere eJobs/BestJobs/Undelucram/OLX/Publi24: termenii lor interzic preluarea automata fara acord scris (`docs/TOS.md`); draft de cerere in `docs/CERERI_ACORD.md`.
 - `scraper/jooble.py`: sursa prin API-ul Jooble (cheie gratuita de la ro.jooble.org/api/about), netestata cu cheie reala; de verificat termenii lor inainte de republicare.
-- Scrierea in peViitor/Solr ramane dezactivata pana la aprobare sau mediu de test.
+- Scrierea in inviitor.ro (Solr/baza lor) ramane dezactivata pana la aprobare sau mediu de test.
