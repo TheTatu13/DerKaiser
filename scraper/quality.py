@@ -15,7 +15,8 @@ import unicodedata
 
 EXCLUDED_CAEN = {"6420", "6820"}
 # ANAF "stare_inregistrare" texts that mean the firm operates.
-ACTIVE_PREFIXES = ("INREGISTRAT", "REINREGISTRAT", "RELUARE ACTIVITATE")
+# TRANSFER(SOSIRE) = the firm moved its registered office into a new county and keeps operating (Catena Pharma, Nemak, Nobel Automotive ...)
+ACTIVE_PREFIXES = ("INREGISTRAT", "REINREGISTRAT", "RELUARE ACTIVITATE", "TRANSFER(SOSIRE)")
 # forma_juridica must look like a company, not a person.
 COMPANY_WORDS = ("SOCIETATE", "COMPANIE", "REGIE")
 _NAME_PERSON = re.compile(

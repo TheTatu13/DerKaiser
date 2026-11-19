@@ -59,7 +59,7 @@ rețetă învățată pe firmă  →  feed-uri ATS publice  →  JSON-LD JobPost
 
 `portals.py` (BestJobs) și `ejobs.py` (eJobs) există, dar **refuză să ruleze** fără `--i-have-written-permission`.
 
-## Pornire rapidă
+## Quick start — pornire rapidă
 
 ```powershell
 py -m pytest tests -q                                           # 536 teste, offline
@@ -105,7 +105,7 @@ Formatul intern al motorului e cel din șablonul Brewtality 3:16 (schema Solr pe
 - Formele de payload pentru Workable, Recruitee, SmartRecruiters și Personio vin din referințe comunitare; de verificat pe răspunsuri reale.
 - Scrierea în inviitor.ro nu a fost încercată pe API-ul real.
 
-## Structura proiectului
+## Layout — structura proiectului
 
 ```
 scraper/   motorul (engine, jobs, workday, posturi, boards, bridge, merge, ...)
@@ -116,6 +116,6 @@ tests/     teste unitare offline
 HANDOFF.md predare: cum rulezi fiecare modul, ce e verificat și ce nu, deciziile asociației
 ```
 
-## Licență
+## License — licență
 
 MIT
