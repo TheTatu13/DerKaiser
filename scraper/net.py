@@ -43,6 +43,7 @@ class NetError(Exception):
 
 
 class HTTPFail(NetError):
+    """HTTP status >= 400 (carries `.status`)."""
     def __init__(self, status: int, url: str):
         super().__init__(f"HTTP {status} {url}")
         self.status = status
@@ -60,6 +61,7 @@ Opener = Callable[[urllib.request.Request, float], "tuple[int, dict, bytes]"]
 
 
 def urllib_opener(req: urllib.request.Request, timeout: float) -> tuple[int, dict, bytes]:
+    """Default network opener: (status, headers, body); the body is read up to MAX_READ."""
     try:
         with urllib.request.urlopen(req, timeout=timeout) as resp:
             return resp.status, dict(resp.headers.items()), resp.read(MAX_READ)  # the per-request cap is Net.max_bytes (applied after); this is only a hard ceiling
@@ -68,6 +70,7 @@ def urllib_opener(req: urllib.request.Request, timeout: float) -> tuple[int, dic
 
 
 class Net:
+    """Polite HTTP client: per-host spacing, robots.txt, retries with backoff, circuit breaker, size cap and an optional disk cache."""
     def __init__(self, *, opener: Opener = urllib_opener, interval: float = 3.0, timeout: float = 12.0,
                  max_bytes: int = 2_000_000, retries: int = 2, backoff_base: float = 1.0, backoff_max: float = 20.0,
                  breaker_threshold: int = 4, respect_robots: bool = True, cache_dir: str | Path | None = None,
@@ -141,6 +144,7 @@ class Net:
 
     # ---- robots ----
     def allowed(self, url: str) -> bool:
+        """True when robots.txt (cached per host) allows fetching this URL."""
         if not self.respect_robots:
             return True
         parts = urlsplit(url)
@@ -161,6 +165,7 @@ class Net:
 
     # ---- public API ----
     def get(self, url: str) -> str:
+        """GET a page as text (cache, robots.txt and retries applied); raises HTTPFail on errors."""
         cached = self._cache_read(url)
         if cached is not None:
             self.stats["cache_hits"] += 1
@@ -176,6 +181,7 @@ class Net:
         return text
 
     def post_json(self, url: str, body: dict) -> dict:
+        """POST a JSON body and return the decoded JSON answer."""
         status, data = self._request("POST", url, json.dumps(body).encode(), {"Content-Type": "application/json"})
         if status >= 400:
             raise HTTPFail(status, url)

@@ -32,6 +32,7 @@ def _norm(text) -> str:
 
 
 def name_reasons(name: str) -> list[str]:
+    """['name_sole_trader'] when the name is a PFA/II/IF-type person, else []."""
     return ["name_sole_trader"] if _NAME_PERSON.search(_norm(name)) else []
 
 

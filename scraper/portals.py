@@ -23,15 +23,18 @@ _AD_HREF = re.compile(r'href="(?:https://www\.bestjobs\.eu)?(/loc-de-munca/[a-z0
 
 
 def slugify(text: str) -> str:
+    """ASCII lowercase slug of a name."""
     t = unicodedata.normalize("NFKD", text or "").encode("ascii", "ignore").decode().lower()
     return re.sub(r"-+", "-", re.sub(r"[^a-z0-9]+", "-", t)).strip("-")
 
 
 def company_slug(company: str) -> str:
+    """Slug of the firm's distinctive name tokens."""
     return slugify(" ".join(M.core_tokens(company)))
 
 
 def load_slugs(get) -> set[str]:
+    """All company slugs listed in the portal's profile sitemaps."""
     index = get(SITEMAP_INDEX)
     slugs: set[str] = set()
     for sm in re.findall(r"<loc>(.*?)</loc>", index):
@@ -44,6 +47,7 @@ def load_slugs(get) -> set[str]:
 
 
 def match_slug(company: str, slugs: set[str]) -> str | None:
+    """The firm's slug if the portal has a profile under it, else None."""
     slug = company_slug(company)
     return slug if slug and slug in slugs else None
 
@@ -60,6 +64,7 @@ def parse_profile(html: str) -> list[tuple[str, str]]:
 
 
 def parse_ad(company: str, url: str, title: str, html: str) -> dict | None:
+    """One portal ad page -> job; None for expired ads or when the employer is another company."""
     data = (html or "").replace('\\"', '"')
     if '"expired":true' in data or re.search(r'"state":"(?!active)[a-z_]+"', data[data.find('"workplaceJob"'):][:200] if '"workplaceJob"' in data else ""):
         return None
@@ -79,6 +84,7 @@ def parse_ad(company: str, url: str, title: str, html: str) -> dict | None:
 
 
 def portal_jobs(company: str, slugs: set[str], get, *, max_ads: int = 60) -> list[dict]:
+    """Jobs of a firm from its portal profile (at most `max_ads` ad pages)."""
     slug = match_slug(company, slugs)
     if not slug:
         return []
@@ -95,6 +101,7 @@ def portal_jobs(company: str, slugs: set[str], get, *, max_ads: int = 60) -> lis
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI: BestJobs company profiles for known firms. Refuses to run without `--i-have-written-permission` (BestJobs terms pt. 3, see docs/TOS.md)."""
     import argparse
     import time
 

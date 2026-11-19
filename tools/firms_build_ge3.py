@@ -1,3 +1,5 @@
+"""Build the candidate firm list from the Ministry of Finance files (bilant2024 + uu2024): >= MIN_EMPLOYEES, turnover > 0, no CAEN 6420.
+Writes run_firme/firme_candidate.jsonl and new_cifs.txt (the CIFs not screened by ANAF yet)."""
 import csv, json, os
 MIN_EMPLOYEES = int(os.environ.get('MIN_EMPLOYEES', '1'))  # 2026-11-19: threshold lowered from 3 to 1
 screened=set()

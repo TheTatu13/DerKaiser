@@ -52,6 +52,7 @@ COUNTIES = [
 
 @dataclass
 class Candidate:
+    """A firm found by a search source (CIF padded to 8, name, place, active flag)."""
     cif: str  # padded to 8
     name: str
     county: str = ""
@@ -71,6 +72,7 @@ def tokens(name: str) -> list[str]:
 
 
 def parse_cuifirma(payload: dict) -> list[Candidate]:
+    """CUIFirma search payload -> candidates."""
     out = []
     for r in (payload or {}).get("results") or []:
         cui = str(r.get("cui", "")).strip()
@@ -83,6 +85,7 @@ def parse_cuifirma(payload: dict) -> list[Candidate]:
 
 
 def parse_cuiscan(rows: list) -> list[Candidate]:
+    """CUIScan rows -> candidates."""
     out = []
     for r in rows or []:
         if not isinstance(r, dict):
@@ -105,10 +108,12 @@ def _get_json(url: str):
 
 
 def search_cuifirma(q: str) -> list[Candidate]:
+    """Search CUIFirma by name."""
     return parse_cuifirma(_get_json("https://cuifirma.ro/api/search?q=" + urllib.parse.quote(q)))
 
 
 def search_cuiscan(q: str) -> list[Candidate]:
+    """Search CUIScan by name."""
     return parse_cuiscan(_get_json("https://cuiscan.ro/api.php?action=search&q=" + urllib.parse.quote(q)))
 
 
@@ -125,10 +130,12 @@ class Budget:
             self._calls.popleft()
 
     def available(self) -> bool:
+        """True while the sliding-window call budget is not spent."""
         self._trim()
         return len(self._calls) < self.limit
 
     def spend(self) -> None:
+        """Record one call against the budget."""
         self._calls.append(self._clock())
 
 
@@ -171,12 +178,14 @@ def run_discovery(
     queued: set[tuple[str, str]] = set(done)
 
     def enqueue(source: str, q: str) -> None:
+        """Queue a search term once per source."""
         q = q.strip()
         if len(q) >= 2 and (source, q.upper()) not in queued:
             queued.add((source, q.upper()))
             queues[source].append(q)
 
     def feed(c: dict | Candidate) -> None:
+        """Queue the name of a found firm and its words as new search terms."""
         name = c["name"] if isinstance(c, dict) else c.name
         for source in queues:
             enqueue(source, name)

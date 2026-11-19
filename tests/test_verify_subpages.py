@@ -1,4 +1,4 @@
-﻿from scraper import model as M
+from scraper import model as M
 
 
 def test_cif_found_on_contact_page_verifies_guessed_site():

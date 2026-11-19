@@ -58,6 +58,7 @@ class FirmCtx:
         self.rendered: dict[str, str] = {}
 
     def get(self, url: str) -> str:
+        """Cached, budgeted GET: raises BudgetExceeded once the request or time budget of this firm is spent."""
         if url in self.pages:
             return self.pages[url]
         if self.requests >= self.max_requests or self._clock() > self.deadline:
@@ -104,6 +105,7 @@ class FirmCtx:
 # ---------- crawl (shared by the broader layers) ----------
 
 def crawl(ctx: FirmCtx, max_careers: int = 4, max_second_level: int = 3) -> None:
+    """Fetch the homepage and the careers pages once per firm (recipe URLs first, else links found on the homepage) into `ctx.pages`."""
     if ctx.crawled:
         return
     ctx.crawled = True
@@ -200,6 +202,7 @@ def run_link_recipe(ctx: FirmCtx, r: dict) -> list[dict]:
 
 
 def layer_recipe(ctx: FirmCtx):
+    """Layer 1: a saved recipe for this firm (known ATS slug or careers URLs); returns None when there is no recipe."""
     r = ctx.recipe
     if not r:
         return None
@@ -212,6 +215,7 @@ def layer_recipe(ctx: FirmCtx):
 
 
 def layer_ats(ctx: FirmCtx):
+    """Layer 2: detect an ATS (Workday and the public boards) referenced on the careers pages and read its jobs directly."""
     crawl(ctx)
     for text in list(ctx.pages.values()):
         wd = WD.detect_workday(text) if ctx.post else None
@@ -240,11 +244,13 @@ def layer_ats(ctx: FirmCtx):
 
 
 def layer_jsonld(ctx: FirmCtx):
+    """Layer 3: schema.org JobPosting blocks embedded in the careers pages."""
     crawl(ctx)
     return "jsonld", J.dedupe(j for url, text in ctx.pages.items() for j in J.extract_jobpostings(ctx.company, text, url))
 
 
 def layer_listing(ctx: FirmCtx):
+    """Layer 4: follow the ad links of a plain careers listing and parse each ad page."""
     crawl(ctx)
     return "listing", J.extract_listing_ads(ctx.company, ctx.pages, ctx.site, ctx.get)
 
@@ -312,6 +318,7 @@ LAYERS: list[tuple[str, Callable]] = [("recipe", layer_recipe), ("ats", layer_at
 # ---------- one firm ----------
 
 def allowed_url(url: str, site: str | None) -> bool:
+    """True only for hosts the engine may fetch for a firm: its own site, ANOFM and the known ATS hosts."""
     host = urllib.parse.urlsplit(url).netloc.lower().removeprefix("www.")
     if host == ANOFM_HOST or any(host == h or host.endswith("." + h) for h in ATS_HOSTS):
         return True
@@ -323,6 +330,7 @@ def run_firm(cif: str, company: str, site: str | None, rows: list[dict], *, fetc
              max_requests: int = 40, max_checks: int = 60, max_seconds: float = 120.0, max_jobs: int = 1000,
              clock: Callable[[], float] = time.monotonic, render: Callable[[str], str] | None = None, max_renders: int = 6,
              learn: bool = False, post: Callable[[str, dict], dict] | None = None) -> dict:
+    """Find one firm's jobs, trying the layers in order under a request/time budget; returns the firm's result row (jobs, method, flags, trace)."""
     t0 = clock()
     site = J.normalize_link(site if "://" in (site or "") else f"https://{site}") if site else None
     if recipe and recipe.get("budget"):  # a learned recipe knows how many pages it needs (big employers, paginated lists)
@@ -334,6 +342,7 @@ def run_firm(cif: str, company: str, site: str | None, rows: list[dict], *, fetc
     method, own = "none", []
 
     def note(layer, state, n=0, err=""):
+        """Append one step (layer, state, count, error) to the firm's trace."""
         trace.append({"layer": layer, "state": state, "n": n, **({"err": err[:120]} if err else {})})
 
     try:
@@ -444,6 +453,7 @@ def _read(path: Path) -> list[dict]:
 
 
 def load_recipe(recipes_dir: str | Path | None, cif: str) -> dict | None:
+    """Load `<recipes_dir>/<cif>.json` if it exists, else None."""
     if not recipes_dir:
         return None
     p = Path(recipes_dir) / f"{cif}.json"
@@ -468,6 +478,7 @@ def save_recipe(recipes_dir: str | Path, cif: str, recipe: dict) -> None:
 def run_all(docs: list[dict], out_dir: str | Path, *, fetch, status, anofm_post, websites: dict | None = None,
             recipes_dir=None, workers: int = 1, max_firms: int | None = None, previous: dict | None = None,
             first_site: Callable[[dict], str] = lambda d: "", **limits) -> dict:
+    """Run `run_firm` over all documents (optionally in parallel threads), appending results so an interrupted run resumes; returns the report."""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     firms_path, jobs_path = out / "jobs_by_firm.jsonl", out / "jobs.jsonl"
@@ -479,6 +490,7 @@ def run_all(docs: list[dict], out_dir: str | Path, *, fetch, status, anofm_post,
     lock = threading.Lock()
 
     def work(doc):
+        """Process one document: ANOFM rows -> site (given or discovered) -> run_firm -> result row."""
         try:
             rows = M.anofm_rows(doc["id"], anofm_post)
         except Exception:  # noqa: BLE001 - supplementary source, never fatal
@@ -512,6 +524,7 @@ def run_all(docs: list[dict], out_dir: str | Path, *, fetch, status, anofm_post,
 
 
 def report(docs: list[dict], out: Path) -> dict:
+    """Summarise a finished run: firms by method, flags, job and site counts."""
     firms = _read(out / "jobs_by_firm.jsonl")
     methods: dict[str, int] = defaultdict(int)
     flags: dict[str, int] = defaultdict(int)

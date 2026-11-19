@@ -14,6 +14,7 @@ ATS_KINDS = ("greenhouse", "lever", "workable", "recruitee", "smartrecruiters", 
 
 
 def fetch_boards(config: dict, get, post, *, on_board=None) -> list[dict]:
+    """Fetch every configured ATS board (greenhouse, lever, ...) and return their Romanian jobs; one failing board never stops the rest."""
     out = []
     for kind in ATS_KINDS:
         for b in config.get(kind, []):
@@ -36,6 +37,7 @@ def fetch_boards(config: dict, get, post, *, on_board=None) -> list[dict]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI: read a boards config, fetch the boards politely (read-only) and write the jobs as jsonl."""
     import argparse
 
     from . import net as N

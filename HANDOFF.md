@@ -87,3 +87,12 @@ Acum `Net.max_bytes` decide (boards: 60 MB). `boards.py`: 185 -> 250 joburi.
 - `model.best_city`: adresa ANOFM ("Judet > Municipiul X > X SECT 1") se transforma in cel mai specific oras acceptat; sectoarele Bucurestiului devin Bucuresti.
   Datele deja exportate (8.631 joburi) pastreaza vechea locatie "Romania" pentru ~4.800 de joburi ANOFM pana la o noua rulare ANOFM.
 - `tools/export_csv.py OUT.csv IN.jsonl [...]`: JSONL-urile de joburi -> CSV (titlu, firma, cif, locatie, judet, remote, link, sursa), fara linkuri duplicate.
+
+## Bug hunt + polish (2026-11-20)
+- **anaf_batch.screen_cifs**: raportul final reconstruia un set de toate CIF-urile verificate pentru fiecare CIF ramas (timp patratic) -> la 350.000 de CIF-uri procesul parea blocat dupa ce termina. Acum setul se construieste o data. Un CIF cu litere nu mai opreste rularea (este ignorat inainte de `int()`).
+- **bridge**: pragul implicit de angajati este 1 (ca in criterii); fisierul de reluare se inchide corect.
+- **publish**: importul `Net` pentru adnotare este acum `TYPE_CHECKING` (nu mai e nume nedefinit).
+- Fisiere cu BOM (scrise din PowerShell) curatate; importuri moarte scoase.
+- Docstring pe toate functiile publice din modulele DerKaiser (engine, jobs, model, net, bridge, boards, portals, posturi, ejobs, workday, financials, merge, discovery, jooble) si pe scripturile din `tools/`. Sabloanele mostenite de la Brewtality (api, validate_jobs, self_healing, learn, parse, main) au ramas neatinse.
+- Teste noi: `tests/test_anaf_batch_regress.py`. Total: 547 trec, 8 sarite.
+- Rulare joburi pe firme: pornita de test 35 min (2.400 firme procesate, 317 cu site, 467 joburi), apoi oprita la cererea utilizatorului; reia de unde a ramas cu `run_firme\chain_after_screen.ps1`.

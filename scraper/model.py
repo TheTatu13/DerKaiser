@@ -28,10 +28,12 @@ _CITY_SET = {c.lower() for c in ROMANIAN_CITIES}
 
 
 def pad_cif(cif) -> str:
+    """CIF as the 8-digit zero-padded string the job model expects."""
     return str(cif).zfill(8)
 
 
 def validate_ro_locations(locations: list[str] | None) -> list[str]:
+    """Keep 'România' and known Romanian cities; anything else is dropped. Falls back to ['România'] when nothing valid is left."""
     valid = []
     for loc in locations or []:
         lower = (loc or "").lower().strip()
@@ -43,6 +45,7 @@ def validate_ro_locations(locations: list[str] | None) -> list[str]:
 
 
 def normalize_workmode(workmode: str | None) -> str | None:
+    """'remote' if it says remote, 'on-site' if it mentions office/site, otherwise 'hybrid'; None when empty."""
     if not workmode:
         return None
     lower = workmode.lower()
@@ -54,6 +57,7 @@ def normalize_workmode(workmode: str | None) -> str | None:
 
 
 def iso_z(dt: datetime) -> str:
+    """UTC ISO-8601 with milliseconds and a trailing Z."""
     return dt.astimezone(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
@@ -115,6 +119,7 @@ def best_city(parts: list[str]) -> str:
 
 
 def parse_anofm(data: dict) -> list[dict]:
+    """ANOFM response rows -> raw jobs (url, title, city via `best_city`, expiry)."""
     out = []
     for row in (data or {}).get("rows") or []:
         parts = [p.strip() for p in (row.get("address_locality_name") or "").split(">")]
@@ -128,6 +133,7 @@ def parse_anofm(data: dict) -> list[dict]:
 
 
 def search_anofm(cif, post: Callable[[str, dict], dict]) -> list[dict]:
+    """All ANOFM jobs of one CIF."""
     return parse_anofm({"rows": anofm_rows(cif, post)})
 
 
@@ -237,6 +243,7 @@ def guess_domains(company: str, limit: int = 4) -> list[str]:
 
 
 def guess_website(company: str, cif: str, get: Callable[[str], str], max_tries: int = 3) -> str | None:
+    """Verified website guessed from the firm's name, else None."""
     for domain in guess_domains(company)[:max_tries]:
         site = verify_site(domain, company, get, strict_cif=cif)
         if site:
@@ -245,6 +252,7 @@ def guess_website(company: str, cif: str, get: Callable[[str], str], max_tries: 
 
 
 def discover_website(rows: list[dict], company: str, get: Callable[[str], str], max_tries: int = 2) -> str | None:
+    """Verified website derived from the contact e-mail domains in the ANOFM rows, else None."""
     for domain in candidate_domains(rows)[:max_tries]:
         site = verify_site(domain, company, get)
         if site:

@@ -18,6 +18,7 @@ def _ascii(s) -> str:
 
 
 def norm_url(url: str) -> str:
+    """Host + path of a URL, lower-case, without 'www.' and a trailing slash (the dedupe key)."""
     p = urllib.parse.urlsplit((url or "").strip())
     return f"{p.hostname or ''}{p.path.rstrip('/')}".lower().removeprefix("www.")
 
@@ -27,6 +28,7 @@ def _tokens(s) -> str:
 
 
 def soft_key(job: dict) -> tuple[str, str, str]:
+    """(title, city, company) key to catch the same job posted under different URLs."""
     title = job.get("title") or job.get("job_title") or ""
     city = job.get("city")
     if city is None:
@@ -37,6 +39,7 @@ def soft_key(job: dict) -> tuple[str, str, str]:
 
 
 def link_of(job: dict) -> str:
+    """The job's link, whichever key the source used."""
     return job.get("url") or job.get("job_link") or ""
 
 
@@ -61,6 +64,7 @@ def merge(sources: list[tuple[str, list[dict]]]) -> tuple[list[dict], dict]:
 
 
 def read_jsonl(path: str) -> list[dict]:
+    """Read a jsonl file, skipping blank and malformed lines."""
     rows = []
     with open(path, encoding="utf-8") as f:
         for line in f:
@@ -74,6 +78,7 @@ def read_jsonl(path: str) -> list[dict]:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI: merge jobs from several `name=path.jsonl` sources into one distinct list."""
     import argparse
 
     ap = argparse.ArgumentParser(description="Deduplicate jobs from several sources (read-only)")

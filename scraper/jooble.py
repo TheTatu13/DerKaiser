@@ -1,4 +1,4 @@
-﻿"""Jooble REST API source (dry-run, resumable). Needs a free API key from https://ro.jooble.org/api/about
+"""Jooble REST API source (dry-run, resumable). Needs a free API key from https://ro.jooble.org/api/about
 
     py -m scraper.jooble --key KEY --out run_jooble/jooble.jsonl [--max-requests 90] [--pages 5]
 
@@ -25,6 +25,7 @@ CITIES = ["", "Bucuresti", "Cluj-Napoca", "Timisoara", "Iasi", "Brasov", "Consta
 
 
 def normalize(job: dict) -> dict | None:
+    """Map one Jooble result to our job fields; None when it has no link or title."""
     url = (job.get("link") or "").strip()
     title = (job.get("title") or "").strip()
     if not url or not title:
@@ -35,6 +36,7 @@ def normalize(job: dict) -> dict | None:
 
 
 def run(post, key: str, out: Path, *, max_requests: int = 90, pages: int = 5, queries=None) -> dict:
+    """Query Jooble within a request quota; resumable via a `.done` file, deduplicated by URL."""
     out.parent.mkdir(parents=True, exist_ok=True)
     done_file = out.with_suffix(".done")
     done = set(done_file.read_text(encoding="utf-8").splitlines()) if done_file.exists() else set()
@@ -79,6 +81,7 @@ def run(post, key: str, out: Path, *, max_requests: int = 90, pages: int = 5, qu
 
 
 def main(argv=None) -> int:
+    """CLI: needs a Jooble API key (`--key`); stays under `--max-requests` per run."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--key", required=True)
     ap.add_argument("--out", default="run_jooble/jooble.jsonl")

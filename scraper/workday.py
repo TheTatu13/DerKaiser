@@ -18,6 +18,7 @@ PAGE = 20  # Workday rejects a larger "limit" on most tenants
 
 
 def detect_workday(text: str) -> tuple[str, str, str] | None:
+    """Find a Workday tenant (tenant, data-centre, site) referenced in a page, else None."""
     for m in WD_RX.finditer(text or ""):
         tenant, wd, site = m.group(1), m.group(2).lower(), m.group(3)
         if site.lower() not in _NOT_SITE:
@@ -26,6 +27,7 @@ def detect_workday(text: str) -> tuple[str, str, str] | None:
 
 
 def endpoint(tenant: str, wd: str, site: str) -> str:
+    """The public CXS jobs endpoint of a Workday site."""
     return f"https://{tenant}.{wd}.myworkdayjobs.com/wday/cxs/{tenant}/{site}/jobs"
 
 
@@ -35,6 +37,7 @@ def _path_location(path: str) -> str:
 
 
 def parse_workday(company: str, tenant: str, wd: str, site: str, data: dict) -> list[dict]:
+    """Workday `jobPostings` JSON -> jobs."""
     jobs = []
     for p in (data or {}).get("jobPostings") or []:
         path = p.get("externalPath") or ""

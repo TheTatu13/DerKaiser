@@ -1,4 +1,4 @@
-﻿from scraper import quality as Q
+from scraper import quality as Q
 
 
 def test_transfer_sosire_is_an_active_firm():

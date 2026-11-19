@@ -61,12 +61,14 @@ def _ascii(text) -> str:
 
 
 def html_to_text(value) -> str:
+    """Strip tags and entities and collapse whitespace."""
     return re.sub(r"\s+", " ", _html.unescape(re.sub(r"<[^>]+>", " ", value or ""))).strip()
 
 
 # ---------- location / remote ----------
 
 def infer_city(*values) -> str | None:
+    """Return the display name of the longest known Romanian city mentioned in the given texts, or None."""
     text = " ".join(_ascii(v) for v in values if v)
     best = None
     for alias in sorted(CITIES, key=len, reverse=True):
@@ -84,6 +86,7 @@ def single_city(*values) -> str | None:
 
 
 def county_of(city: str | None) -> list[str]:
+    """County (as a one-item list) of a known city, else an empty list."""
     if not city:
         return []
     for display, county in CITIES.values():
@@ -93,11 +96,13 @@ def county_of(city: str | None) -> list[str]:
 
 
 def has_romania_signal(*values) -> bool:
+    """True when the texts mention Romania or a known Romanian city."""
     text = " ".join(_ascii(v) for v in values if v)
     return "romania" in text or infer_city(*values) is not None
 
 
 def infer_remote(*values) -> list[str]:
+    """Work mode from free text: ['hybrid'], ['remote'] or []."""
     text = " ".join(_ascii(v) for v in values if v)
     if "hybrid" in text or "hibrid" in text:
         return ["hybrid"]
@@ -142,6 +147,7 @@ def build_job(company, title, link, location_signals, remote_signals=None) -> di
 
 
 def dedupe(jobs: Iterable[dict | None]) -> list[dict]:
+    """Drop jobs with a repeated `job_link`, keeping the first."""
     seen, out = set(), []
     for job in jobs:
         if job and job["job_link"] not in seen:
@@ -153,6 +159,7 @@ def dedupe(jobs: Iterable[dict | None]) -> list[dict]:
 # ---------- ATS parsers (payload -> jobs) ----------
 
 def parse_greenhouse(company: str, data: dict) -> list[dict]:
+    """Jobs from a Greenhouse board JSON."""
     jobs = []
     for j in (data or {}).get("jobs", []):
         meta = [m.get("value", "") for m in j.get("metadata") or [] if isinstance(m, dict)
@@ -163,6 +170,7 @@ def parse_greenhouse(company: str, data: dict) -> list[dict]:
 
 
 def parse_lever(company: str, data: list) -> list[dict]:
+    """Jobs from a Lever postings JSON."""
     jobs = []
     for j in data or []:
         cat = j.get("categories") or {}
@@ -173,6 +181,7 @@ def parse_lever(company: str, data: list) -> list[dict]:
 
 
 def parse_workable(company: str, data: dict) -> list[dict]:
+    """Jobs from a Workable widget JSON."""
     jobs = []
     for j in (data or {}).get("jobs", []):
         remote = ["remote"] if j.get("telecommuting") else []
@@ -185,6 +194,7 @@ def parse_workable(company: str, data: dict) -> list[dict]:
 
 
 def parse_recruitee(company: str, data: dict) -> list[dict]:
+    """Jobs from a Recruitee offers JSON."""
     jobs = []
     for j in (data or {}).get("offers", []):
         remote = ["remote"] if j.get("remote") else []
@@ -197,6 +207,7 @@ def parse_recruitee(company: str, data: dict) -> list[dict]:
 
 
 def parse_smartrecruiters(company: str, slug: str, data: dict) -> list[dict]:
+    """Jobs from a SmartRecruiters postings JSON."""
     jobs = []
     for j in (data or {}).get("content", []):
         loc = j.get("location") or {}
@@ -209,6 +220,7 @@ def parse_smartrecruiters(company: str, slug: str, data: dict) -> list[dict]:
 
 
 def parse_personio(company: str, slug: str, xml_text: str) -> list[dict]:
+    """Jobs from a Personio XML feed."""
     try:
         root = ET.fromstring(xml_text)
     except ET.ParseError:
@@ -236,6 +248,7 @@ _NOT_SLUG = {"embed", "api", "www", "jobs", "careers", "static"}
 
 
 def detect_ats(text: str) -> tuple[str, str] | None:
+    """Find a known ATS and its slug referenced in a page; returns (name, slug) or None."""
     for name, pattern in _ATS_PATTERNS:
         for m in pattern.finditer(text or ""):
             slug = m.group(1)
@@ -245,6 +258,7 @@ def detect_ats(text: str) -> tuple[str, str] | None:
 
 
 def ats_url(ats: str, slug: str) -> str:
+    """Public API/feed URL of a board for the given ATS and slug."""
     return {
         "greenhouse": f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true",
         "lever": f"https://api.lever.co/v0/postings/{slug}?mode=json",
@@ -256,6 +270,7 @@ def ats_url(ats: str, slug: str) -> str:
 
 
 def parse_ats(ats: str, company: str, slug: str, body: str) -> list[dict]:
+    """Dispatch to the parser of the given ATS (the body is JSON, or XML for Personio)."""
     if ats == "personio":
         return parse_personio(company, slug, body)
     try:
@@ -318,6 +333,7 @@ def extract_jobpostings(company: str, page_html: str, page_url: str) -> list[dic
 # ---------- careers discovery ----------
 
 def find_careers_links(page_html: str, base_url: str, limit: int = 5) -> list[str]:
+    """Links on a page whose URL or label looks like a careers page, resolved against `base_url`."""
     found = []
     for m in re.finditer(r'<a\b[^>]*?href=["\']([^"\'#][^"\']*)["\'][^>]*>(.*?)</a>', page_html or "", re.I | re.S):
         href, label = m.group(1), html_to_text(m.group(2))
@@ -447,6 +463,7 @@ def confirm_ad(company: str, ad_url: str, ad_html: str) -> dict | None:
 
 
 def extract_listing_ads(company: str, pages: dict[str, str], site: str, get: Callable[[str], str], max_ads: int = 30) -> list[dict]:
+    """Follow the job-ad links of a careers listing and parse each ad page (at most `max_ads`)."""
     cands: list[str] = []
     careers_pages = {u: h for u, h in pages.items() if u != site} or pages
     for url, html in careers_pages.items():

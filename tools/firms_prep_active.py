@@ -1,3 +1,5 @@
+"""Join the ANAF screening result with the candidate list: keep the firms that pass every gate, with their employee counts
+(output firme_active_ge3.jsonl; the file name is legacy, the threshold is now MIN_EMPLOYEES)."""
 import json
 emp={}; 
 for l in open("run_firme/firme_candidate.jsonl",encoding="utf-8"):

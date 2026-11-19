@@ -1,4 +1,4 @@
-﻿from scraper import quality as Q
+from scraper import quality as Q
 
 def _rec(forma, name="X"):
     return {"name": name, "stare": "INREGISTRAT din data 01.01.2000", "forma_juridica": forma, "caen": "1011", "inactive": False}

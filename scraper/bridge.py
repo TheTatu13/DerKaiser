@@ -37,7 +37,7 @@ def _num(value) -> float | None:
         return None
 
 
-def firms_from_rows(rows: Iterable[dict], *, min_employees: int = 2) -> Iterator[dict]:
+def firms_from_rows(rows: Iterable[dict], *, min_employees: int = 1) -> Iterator[dict]:
     """``{"id", "company", "employees"}`` for firms with at least ``min_employees`` (unknown employees are skipped)."""
     seen = set()
     for row in rows:
@@ -73,6 +73,7 @@ def dns_resolves(domain: str) -> bool:
 
 def find_site(firm: dict, get: Callable[[str], str], *, max_tries: int = 6,
               resolves: Callable[[str], bool] | None = None) -> str | None:
+    """Try name-based domain guesses (skipping those that do not resolve in DNS) and return the first one whose pages prove it belongs to this firm, else None."""
     for domain in more_domains(firm["company"], limit=max_tries):
         if resolves is not None and not resolves(domain):
             continue
@@ -83,9 +84,11 @@ def find_site(firm: dict, get: Callable[[str], str], *, max_tries: int = 6,
 
 
 def run(firms: list[dict], get, out_path: str, *, workers: int = 4, on_firm=None, resolves=None) -> dict:
+    """Find the website of every firm (resumable: CIFs already in `out_path` are skipped), appending one document per firm; returns counts."""
     done = set()
-    try:
-        done = {json.loads(l)["id"] for l in open(out_path, encoding="utf-8") if l.strip()}
+    try:  # resume: CIFs already written are skipped
+        with open(out_path, encoding="utf-8") as fh:
+            done = {json.loads(l)["id"] for l in fh if l.strip()}
     except FileNotFoundError:
         pass
     todo = [f for f in firms if f["id"] not in done]
@@ -113,6 +116,7 @@ def _safe_find(firm, get, resolves=None):
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI: firms jsonl -> verified websites -> documents for `derkaiser --jobs` (biggest employers first)."""
     import argparse
 
     from . import net as N
@@ -120,7 +124,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description="firms (CIF, name, employees) -> verified website -> docs for derkaiser --jobs")
     ap.add_argument("--firms", required=True, help="jsonl with cif/id, company/name, employees (e.g. financials.jsonl)")
     ap.add_argument("--out", required=True)
-    ap.add_argument("--min-employees", type=int, default=2)
+    ap.add_argument("--min-employees", type=int, default=1)
     ap.add_argument("--max-firms", type=int, default=0)
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--interval", type=float, default=3.0)
@@ -134,6 +138,7 @@ def main(argv: list[str] | None = None) -> int:
     n = {"i": 0}
 
     def progress(firm, site):
+        """Print a progress line every 25 firms."""
         n["i"] += 1
         if n["i"] % 25 == 0:
             print(f"{n['i']}/{len(firms)}", flush=True)

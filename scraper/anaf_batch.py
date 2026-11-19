@@ -7,7 +7,6 @@ at most 1 request/second. One request replaces 100 CUIScan calls. Local files on
 from __future__ import annotations
 
 import json
-import time
 import urllib.request
 from datetime import date
 from pathlib import Path
@@ -34,6 +33,7 @@ def _http_post(payload: list[dict]) -> dict:
 
 
 def normalize(entry: dict) -> dict:
+    """Flatten one ANAF `found` entry into the fields the quality gates read (status, legal form, CAEN, inactive flag...)."""
     dg = entry.get("date_generale") or {}
     cui = str(dg.get("cui", "")).strip()
     return {
@@ -77,7 +77,8 @@ def screen_cifs(
     out.mkdir(parents=True, exist_ok=True)
     path = out / "screened.jsonl"
     done = {r["cif"] for r in _load_jsonl(path)}
-    todo = [c for c in dict.fromkeys(cifs) if c not in done]
+    # ANAF takes numeric CUIs only: a value with letters would crash int() mid-run, so it is dropped up front
+    todo = [c for c in dict.fromkeys(cifs) if c not in done and str(c).isdigit()]
     throttle = throttle or Throttle(1.5)
     today = today or date.today().isoformat()
     fails = 0
@@ -102,6 +103,7 @@ def screen_cifs(
                                     ensure_ascii=False) + "\n")
             fh.flush()
     rows = _load_jsonl(path)
+    screened = {r["cif"] for r in rows}  # built once: rebuilding it per CIF made the final step quadratic
     passed = sorted(r["cif"] for r in rows if r["ok"])
     (out / "cifs_screened.txt").write_text("\n".join(passed) + ("\n" if passed else ""), encoding="utf-8")
     why: dict[str, int] = {}
@@ -111,7 +113,7 @@ def screen_cifs(
             why[key] = why.get(key, 0) + 1
     report = {"screened_total": len(rows), "passed": len(passed), "failed": len(rows) - len(passed),
               "fail_reasons": dict(sorted(why.items(), key=lambda kv: -kv[1])),
-              "left_to_screen": len([c for c in todo if c not in {r["cif"] for r in rows}]),
+              "left_to_screen": sum(1 for c in todo if c not in screened),
               "aborted": aborted, "dry_run": True}
     (out / "screen_report.json").write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
     return report

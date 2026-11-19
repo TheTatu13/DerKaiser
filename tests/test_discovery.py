@@ -1,4 +1,4 @@
-﻿import json
+import json
 
 from scraper import discovery as d
 from scraper.sources import SourceUnavailable, Throttle

@@ -16,6 +16,7 @@ from . import sources as src
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI entry point: build company documents for many CIFs, or scrape their jobs with `--jobs` (dry-run, local files only)."""
     parser = argparse.ArgumentParser(
         prog="derkaiser",
         description="Build company documents for many CIFs (dry-run: local files only).",

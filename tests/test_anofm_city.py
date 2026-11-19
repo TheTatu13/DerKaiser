@@ -1,4 +1,4 @@
-﻿from scraper import model as M
+from scraper import model as M
 
 
 def test_best_city_bucharest_sector_and_municipality():

@@ -1,3 +1,4 @@
+"""Screen the CIFs in new_cifs.txt through ANAF (100 per request). Resumable: stop and restart at any time."""
 import sys; sys.path.insert(0, ".")
 import json
 from scraper.anaf_batch import screen_cifs

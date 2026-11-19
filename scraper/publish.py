@@ -18,10 +18,13 @@ import urllib.error
 import urllib.request
 from collections import defaultdict
 from pathlib import Path
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 from . import jobs as J
 from . import model as M
+
+if TYPE_CHECKING:  # only for the annotation of run_jobs; the real import is lazy inside the function
+    from .net import Net
 
 USER_AGENT = "DerKaiser-peViitor/0.1 (volunteer project; github.com/thetatu13)"
 
@@ -33,6 +36,7 @@ class Pace:
         self.min_interval, self._clock, self._sleep, self._last = min_interval, clock, sleep, None
 
     def wait(self) -> None:
+        """Sleep just long enough to keep the minimum gap since the last request."""
         if self._last is not None:
             gap = self.min_interval - (self._clock() - self._last)
             if gap > 0:
@@ -41,9 +45,11 @@ class Pace:
 
 
 def make_getter(pace: Pace | None = None, max_bytes: int = 2_000_000) -> Callable[[str], str]:
+    """Paced GET function reading at most `max_bytes` of a page."""
     pace = pace or Pace()
 
     def get(url: str) -> str:
+        """Paced GET returning the decoded page text."""
         pace.wait()
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT, "Accept": "text/html,application/json,*/*"})
         with urllib.request.urlopen(req, timeout=12) as resp:
@@ -57,6 +63,7 @@ def make_status_checker(pace: Pace | None = None) -> Callable[[str], int]:
     pace = pace or Pace()
 
     def status(url: str) -> int:
+        """Paced request returning only the HTTP status code (0 on network errors)."""
         pace.wait()
         req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
         try:
@@ -72,9 +79,11 @@ def make_status_checker(pace: Pace | None = None) -> Callable[[str], int]:
 
 
 def make_anofm_poster(pace: Pace | None = None) -> Callable[[str, dict], dict]:
+    """Paced POST-JSON function for the ANOFM search endpoint."""
     pace = pace or Pace()
 
     def post(url: str, body: dict) -> dict:
+        """Paced POST of a JSON body."""
         pace.wait()
         return _post_json(url, body, None)
 

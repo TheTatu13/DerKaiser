@@ -19,6 +19,7 @@ _AD = re.compile(r'(?:https://posturi\.gov\.ro)?(/joburi/[a-z0-9-]+/)')
 
 
 def ad_links(listing_html: str) -> list[str]:
+    """Absolute ad URLs found on a listing page, in order, without repeats."""
     seen, out = set(), []
     for path in _AD.findall(listing_html or ""):
         if path not in seen:
@@ -54,6 +55,7 @@ def listing_ads(get, *, max_pages: int = 400, max_failures: int = 5, max_stale: 
 
 
 def parse_ad(page_html: str, url: str) -> dict | None:
+    """One posturi.gov.ro ad page -> job (employer read from the page); None if unusable."""
     company = E.employer_of(page_html)
     if not company:
         return None
@@ -62,6 +64,7 @@ def parse_ad(page_html: str, url: str) -> dict | None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI: read the public-sector listing pages (read-only, paced)."""
     import argparse
     import time
 

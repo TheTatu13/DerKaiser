@@ -24,7 +24,7 @@ import json
 import logging
 import re
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any, Callable, Sequence
 
 from bs4 import BeautifulSoup, Tag
 

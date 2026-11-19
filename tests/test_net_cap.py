@@ -1,4 +1,4 @@
-﻿from scraper.net import Net
+from scraper.net import Net
 
 
 def _opener(size):

@@ -36,11 +36,13 @@ def _http_get(cui: str):
 
 
 def latest_year(rows) -> dict | None:
+    """The most recent yearly record (by `an`), or None."""
     rows = [r for r in rows or [] if isinstance(r, dict) and isinstance(r.get("an"), int)]
     return max(rows, key=lambda r: r["an"]) if rows else None
 
 
 def assess(rows, *, this_year: int, min_employees: int = 1) -> dict:
+    """Gate result {ok, reasons, year, employees, turnover} from the latest year's employees and turnover."""
     last = latest_year(rows)
     if not last:
         return {"ok": False, "reasons": assess_financials(None, None), "year": None, "employees": None, "turnover": None}
@@ -63,6 +65,7 @@ def screen_financials(
     today: date | None = None,
     max_consecutive_unavailable: int = 5,
 ) -> dict:
+    """Screen CIFs through the financial gates with an injectable fetcher; resumable, writes local files only."""
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     path = out / "financials.jsonl"

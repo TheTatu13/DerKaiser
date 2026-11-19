@@ -1,4 +1,4 @@
-﻿"""Merged jobs (JSONL, any DerKaiser source format) -> CSV: titlu, firma, cif, locatie, judet, remote, link, sursa.
+"""Merged jobs (JSONL, any DerKaiser source format) -> CSV: titlu, firma, cif, locatie, judet, remote, link, sursa.
 
     py tools/export_csv.py jobs.csv run_all/final_distinct.jsonl [more.jsonl ...]
 

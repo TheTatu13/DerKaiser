@@ -34,6 +34,7 @@ def sitemap_ads(get) -> list[str]:
 
 
 def employer_of(page_html: str) -> str:
+    """Employer name from the JSON-LD of an ad page ('' if absent)."""
     for block in _LD.findall(page_html or ""):
         try:
             data = json.loads(_h.unescape(block.strip()))
@@ -50,6 +51,7 @@ def employer_of(page_html: str) -> str:
 
 
 def parse_ad(page_html: str, url: str) -> dict | None:
+    """One ad page -> job; None when the employer is anonymous or the page has no JobPosting."""
     company = employer_of(page_html)
     if not company or re.search(r"confiden", company, re.I):
         return None  # anonymous employer: nothing to attach the ad to
@@ -58,6 +60,7 @@ def parse_ad(page_html: str, url: str) -> dict | None:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """CLI: eJobs sitemap -> ad pages. Refuses to run without `--i-have-written-permission` (eJobs terms 7.2/7.3/7.5, see docs/TOS.md)."""
     import argparse
     import time
 

@@ -1,3 +1,4 @@
+"""Collect the firms that already have a verified website from run_firme/full/docs.jsonl, so the jobs run reads only those."""
 import json
 seen=set(); out=[]
 for l in open("run_firme/full/docs.jsonl",encoding="utf-8"):
