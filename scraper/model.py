@@ -127,6 +127,30 @@ def candidate_domains(rows: list[dict]) -> list[str]:
     return sorted(counts, key=lambda d: (-counts[d], d))
 
 
+
+SUBPAGES = ("/contact", "/contact/", "/despre-noi", "/despre", "/termeni-si-conditii", "/politica-de-confidentialitate")
+
+
+def _cif_with_context(text: str, cif: str) -> bool:
+    """CIF written as 'CUI/CIF/C.U.I./Cod fiscal/RO' + number (a bare number anywhere proves nothing)."""
+    return re.search(r"(?:cui|cif|c\.u\.i\.?|cod\s+(?:de\s+)?(?:identificare\s+)?fiscal|\bro)\s*[:.\-]?\s*(?:ro)?\s*0*" + re.escape(cif) + r"(?!\d)", text) is not None
+
+
+def _cif_on_subpages(base_url: str, cif: str, get: Callable[[str], str]) -> bool:
+    if not cif:
+        return False
+    for path in SUBPAGES:
+        try:
+            page = get(base_url.rstrip("/") + path)
+        except Exception:  # noqa: BLE001 - a missing page is the normal case
+            continue
+        text = _ascii(re.sub(r"<[^>]+>", " ", page))
+        if _cif_with_context(text, cif):
+            return True
+    return False
+
+
+
 def verify_site(domain: str, company: str, get: Callable[[str], str], *, strict_cif: str | None = None) -> str | None:
     """Return ``https://domain`` only if the homepage loads AND belongs to the company.
 
@@ -155,6 +179,10 @@ def verify_site(domain: str, company: str, get: Callable[[str], str], *, strict_
             foreign_cif = bool(others) and cif not in others  # the page states another firm's CUI: same name, other firm
             if named and not foreign_cif and (has_cif or (domain.endswith(".ro") and "romania" in text)):
                 return url
+            if not foreign_cif and (named or any(t in label for t in tokens)):
+                # the CIF is rarely on the homepage: Romanian sites state it on contact / terms / privacy pages
+                if _cif_on_subpages(url, cif, get):
+                    return url
             continue
         if any(t in label for t in tokens) or full in flat or (len(tokens) > 1 and all(t in text for t in tokens)):
             return url
