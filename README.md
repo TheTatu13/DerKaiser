@@ -1,4 +1,4 @@
-<h1 align="center">DerKaiser</h1>
+<h1 align="center">König</h1>
 
 <p align="center">
   Scraper local, <b>dry-run</b>, pentru joburile firmelor din România — construit pentru

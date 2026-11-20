@@ -1,4 +1,4 @@
-# DerKaiser — predare pentru testare
+# König — predare pentru testare
 
 Scraper local, multi-firmă, derivat din șablonul Brewtality 3:16. **Dry-run: nu scrie nimic în inviitor.ro (Solr/baza lor).**
 Pornește de la firmă (CIF din ANOFM), îi găsește site-ul și anunțurile (fiecare cu linkul ei) și completează cu portaluri.
@@ -93,7 +93,7 @@ Acum `Net.max_bytes` decide (boards: 60 MB). `boards.py`: 185 -> 250 joburi.
 - **bridge**: pragul implicit de angajati este 1 (ca in criterii); fisierul de reluare se inchide corect.
 - **publish**: importul `Net` pentru adnotare este acum `TYPE_CHECKING` (nu mai e nume nedefinit).
 - Fisiere cu BOM (scrise din PowerShell) curatate; importuri moarte scoase.
-- Docstring pe toate functiile publice din modulele DerKaiser (engine, jobs, model, net, bridge, boards, portals, posturi, ejobs, workday, financials, merge, discovery, jooble) si pe scripturile din `tools/`. Sabloanele mostenite de la Brewtality (api, validate_jobs, self_healing, learn, parse, main) au ramas neatinse.
+- Docstring pe toate functiile publice din modulele König (engine, jobs, model, net, bridge, boards, portals, posturi, ejobs, workday, financials, merge, discovery, jooble) si pe scripturile din `tools/`. Sabloanele mostenite de la Brewtality (api, validate_jobs, self_healing, learn, parse, main) au ramas neatinse.
 - Teste noi: `tests/test_anaf_batch_regress.py`. Total: 547 trec, 8 sarite.
 - Rulare joburi pe firme: pornita de test 35 min (2.400 firme procesate, 317 cu site, 467 joburi), apoi oprita la cererea utilizatorului; reia de unde a ramas cu `run_firme\chain_after_screen.ps1`.
 
@@ -110,7 +110,7 @@ Acum `Net.max_bytes` decide (boards: 60 MB). `boards.py`: 185 -> 250 joburi.
 ## Rulare pe GitHub Actions (dry-run, pe zile)
 
 - Workflow: `.github/workflows/derkaiser-run.yml` (doar manual). Lucreaza ~5.5 h, salveaza starea pe branch-ul `run-state` si porneste singur urmatoarea felie pana termina.
-- Pasi: 1) `powershell -ExecutionPolicy Bypass -File tools\seed_run_state.ps1` (o data, urca lista de firme + progresul de pe PC); 2) GitHub > Actions > "DerKaiser run" > Run workflow.
+- Pasi: 1) `powershell -ExecutionPolicy Bypass -File tools\seed_run_state.ps1` (o data, urca lista de firme + progresul de pe PC); 2) GitHub > Actions > "König run" > Run workflow.
 - Oprire: variabila de repo `DERKAISER_PAUSE=true` sau fisier `STOP` in `run-state`. Starea e in `run-state` (docs.jsonl, out/jobs.jsonl, run_summary.json).
 - Nu scrie nicaieri in afara de acest repo. `scrape.yml` (cron zilnic mostenit, putea scrie in API) a fost scos din cron, ramane doar manual.
 - Neverificat: daca ANAF/site-urile raspund de pe IP-urile GitHub, minutele gratuite (repo privat: 2000/luna) si regulile GitHub pentru rulari lungi.

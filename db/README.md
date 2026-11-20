@@ -1,4 +1,4 @@
-# db/ — baza de date a joburilor DerKaiser
+# db/ — baza de date a joburilor König
 
 Doua variante, cu aceleasi reguli de date:
 

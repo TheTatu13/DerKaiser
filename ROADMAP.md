@@ -1,4 +1,4 @@
-# DerKaiser: roadmap cu test de uzura dupa fiecare faza
+# König: roadmap cu test de uzura dupa fiecare faza
 
 Stare: doar local. Nimic nu se publica si nu se scrie in Solr pana la faza 4.
 
@@ -22,7 +22,7 @@ cadere), 285 teste unit, test live pe 3 CIF-uri.
 Lista de CIF-uri (sursa), sursa joburilor, endpoint + autentificare Solr, codul
 `inviitor-ro-nodejs-scraper`, limite/termeni CUIScan si CUIFirma, valoarea `scraperFile`.
 - **Test de uzura F1 (validarea ipotezelor):** 20 documente reale din Solr comparate camp cu camp
-  cu ce produce DerKaiser pentru acelasi CIF.
+  cu ce produce König pentru acelasi CIF.
 - **Trece daca:** diferentele sunt explicate (nu necunoscute) pentru toate cele 20.
 
 ## Faza 2: Mod "multe firme" + reluare

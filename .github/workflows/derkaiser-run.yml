@@ -1,4 +1,4 @@
-name: DerKaiser run (dry-run, resumable)
+name: König run (dry-run, resumable)
 
 # Runs the firm-website + jobs scraping in slices of ~5.5 h and starts the next slice by itself until done.
 # DRY-RUN: writes only to the `run-state` branch of THIS repo. Nothing is sent to peViitor / inviitor / any database.

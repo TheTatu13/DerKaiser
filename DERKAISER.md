@@ -1,4 +1,4 @@
-# DerKaiser
+# König
 
 Scraper Python **multi-companie** pentru peViitor, derivat din Brewtality 3:16 (`scraper-py/`).
 Stare: **doar local**, nepublicat. Nu exista repo GitHub, nu s-a facut push.
@@ -96,7 +96,7 @@ Reguli, in ordine:
 7. al nostru / Inviitor, cu diferente -> `update` + lista campurilor
 
 **De decis cu Sebi:** documentele create de Inviitor (`inviitor-ro-nodejs-scraper`) sunt acum considerate
-actualizabile (DerKaiser ii preia rolul). Daca nu, se scot din `DEFAULT_UPDATABLE`.
+actualizabile (König ii preia rolul). Daca nu, se scot din `DEFAULT_UPDATABLE`.
 
 **Test de uzura F4 (simulat, nu pe Solr real):** 1.000 firme CUI pe 7 cifre, 6 situatii amestecate:
 0 decizii diferite de adevarul-de-referinta, 0 documente straine care ar fi modificate, 0 dubluri create
