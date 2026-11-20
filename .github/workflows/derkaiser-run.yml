@@ -1,0 +1,71 @@
+name: DerKaiser run (dry-run, resumable)
+
+# Runs the firm-website + jobs scraping in slices of ~5.5 h and starts the next slice by itself until done.
+# DRY-RUN: writes only to the `run-state` branch of THIS repo. Nothing is sent to peViitor / inviitor / any database.
+# Pause: set repo variable DERKAISER_PAUSE=true (Settings > Secrets and variables > Actions > Variables) or add a file STOP to run-state.
+
+on:
+  workflow_dispatch:
+    inputs:
+      minutes:
+        description: 'Minutes of work in this slice (max 340)'
+        default: '330'
+
+concurrency:
+  group: derkaiser-run
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  slice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pause switch
+        id: gate
+        run: |
+          if [ "${{ vars.DERKAISER_PAUSE }}" = "true" ]; then echo "go=false" >> "$GITHUB_OUTPUT"; echo "Paused by DERKAISER_PAUSE"; else echo "go=true" >> "$GITHUB_OUTPUT"; fi
+
+      - uses: actions/setup-python@v5
+        if: steps.gate.outputs.go == 'true'
+        with:
+          python-version: '3.12'
+
+      - name: Install
+        if: steps.gate.outputs.go == 'true'
+        run: pip install -r requirements.txt
+
+      - name: Restore state (branch run-state)
+        if: steps.gate.outputs.go == 'true'
+        run: |
+          git clone --depth 1 --branch run-state "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" state_repo \
+            || { echo "::error::branch run-state does not exist: seed it first (tools/seed_run_state.ps1)"; exit 1; }
+
+      - name: Work
+        id: work
+        if: steps.gate.outputs.go == 'true'
+        run: python -m scraper.actions_run --state state_repo --minutes "${{ inputs.minutes || '330' }}"
+
+      - name: Save state
+        if: always() && steps.gate.outputs.go == 'true'
+        run: |
+          cd state_repo
+          printf 'firms_active.jsonl\ncache/\n*.tmp\n' > .gitignore
+          git config user.name "derkaiser-bot"; git config user.email "derkaiser-bot@users.noreply.github.com"
+          git checkout --orphan snapshot
+          git add -A
+          git commit -q -m "state $(date -u +%FT%TZ)"
+          git push -q --force origin snapshot:run-state
+
+      - name: Next slice
+        if: always() && steps.gate.outputs.go == 'true' && steps.work.outputs.finished == 'false' && steps.work.outputs.failed == 'false'
+        run: |
+          if [ "$(gh variable get DERKAISER_PAUSE 2>/dev/null)" = "true" ]; then echo "paused"; exit 0; fi
+          gh workflow run derkaiser-run.yml --ref "${{ github.ref_name }}" -f minutes=330

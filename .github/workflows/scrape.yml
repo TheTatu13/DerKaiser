@@ -1,4 +1,4 @@
-name: Scrape
+name: Scrape (manual only; the daily cron was removed in DerKaiser: it could write to the API)
 
 # CANONICAL CALLER PATTERN — copy this whole file into a new company
 # scraper repo unchanged. Do NOT copy scrape-reusable.yml itself; that stays
@@ -9,8 +9,6 @@ name: Scrape
 # you deliberately want to move everyone to a new template version.
 
 on:
-  schedule:
-    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       dry_run:

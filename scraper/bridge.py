@@ -83,12 +83,25 @@ def find_site(firm: dict, get: Callable[[str], str], *, max_tries: int = 6,
     return None
 
 
+
+def _done_ids(lines) -> set:
+    """Ids already in docs.jsonl; a line cut off by a killed run (or any garbage) is skipped instead of crashing the resume."""
+    done = set()
+    for l in lines:
+        if not l.strip():
+            continue
+        try:
+            done.add(json.loads(l)["id"])
+        except (ValueError, KeyError, TypeError):
+            continue
+    return done
+
 def run(firms: list[dict], get, out_path: str, *, workers: int = 4, on_firm=None, resolves=None) -> dict:
     """Find the website of every firm (resumable: CIFs already in `out_path` are skipped), appending one document per firm; returns counts."""
     done = set()
     try:  # resume: CIFs already written are skipped
         with open(out_path, encoding="utf-8") as fh:
-            done = {json.loads(l)["id"] for l in fh if l.strip()}
+            done = _done_ids(fh)
     except FileNotFoundError:
         pass
     todo = [f for f in firms if f["id"] not in done]

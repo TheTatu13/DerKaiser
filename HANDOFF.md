@@ -106,3 +106,11 @@ Acum `Net.max_bytes` decide (boards: 60 MB). `boards.py`: 185 -> 250 joburi.
 - **Baza locala SQLite + cautare** (`scraper/jobdb.py`, `deschide_joburi.bat`): `py -m scraper.jobdb build|search|stats|serve`. Cautare fara diacritice (FTS5), filtre pe oras/judet/sursa/mod de lucru, pagina web read-only pe 127.0.0.1, fara dependinte. `derkaiser.db` e in .gitignore (se reconstruieste din jsonl).
 - `db/search.sql`: cautare optionala pentru Postgres (`search_jobs('text')`, unaccent + pg_trgm).
 - Pe datele reale: 8.824 joburi, 4.189 angajatori distincti; 4.887 joburi n-au oras (ANOFM care zice doar \"Romania\"; se repara cu rerularea ANOFM ~3 h).
+
+## Rulare pe GitHub Actions (dry-run, pe zile)
+
+- Workflow: `.github/workflows/derkaiser-run.yml` (doar manual). Lucreaza ~5.5 h, salveaza starea pe branch-ul `run-state` si porneste singur urmatoarea felie pana termina.
+- Pasi: 1) `powershell -ExecutionPolicy Bypass -File tools\seed_run_state.ps1` (o data, urca lista de firme + progresul de pe PC); 2) GitHub > Actions > "DerKaiser run" > Run workflow.
+- Oprire: variabila de repo `DERKAISER_PAUSE=true` sau fisier `STOP` in `run-state`. Starea e in `run-state` (docs.jsonl, out/jobs.jsonl, run_summary.json).
+- Nu scrie nicaieri in afara de acest repo. `scrape.yml` (cron zilnic mostenit, putea scrie in API) a fost scos din cron, ramane doar manual.
+- Neverificat: daca ANAF/site-urile raspund de pe IP-urile GitHub, minutele gratuite (repo privat: 2000/luna) si regulile GitHub pentru rulari lungi.
