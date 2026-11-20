@@ -26,3 +26,4 @@ probe*.py
 recon*.py
 make_docs_all.py
 derkaiser.zip
+*.db

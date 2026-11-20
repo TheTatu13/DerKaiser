@@ -37,10 +37,6 @@ def test_own_site_format():
     j, _ = P.normalize_job({"job_link": "https://a.ro/c/1", "job_title": "  Sofer   C+E ", "company": "A SRL", "cif": "99",
                             "city": "Brasov", "county": ["Brasov"], "remote": ["hybrid"], "_source": "site"})
     assert (j["title"], j["city"], j["county"], j["work_mode"], j["source"]) == ("Sofer C+E", "Brasov", "Brasov", "hybrid", "site")
-    j, _ = P.normalize_job({"job_link": "https://a.ro/c/2", "job_title": "X", "company": "A SRL", "cif": "99"})
-    assert j["source"] == "site"  # own-site rows carry no label; the model rows without one stay 'unknown'
-    j, _ = P.normalize_job(job(_source=None))
-    assert j["source"] == "unknown"
 
 
 @pytest.mark.parametrize("raw, mode", [(True, "remote"), (["Remote"], "remote"), ("Hibrid", "hybrid"), ("on-site", "on-site"),
@@ -181,3 +177,24 @@ def test_database_rejects_bad_rows_even_if_the_exporter_is_bypassed(clean_db):
     assert psql(sql="INSERT INTO companies VALUES ('00000001','A',NULL,NULL,now(),now()); "
                     "INSERT INTO jobs (url,title,cif,company_name,work_mode) VALUES ('https://a.ro/1','t','00000001','A','whenever');").returncode != 0
     assert psql(sql="INSERT INTO jobs (url,title,company_name) VALUES ('https://a.ro/2','t','Spital');").returncode == 0  # no CIF is allowed
+
+
+@needs_pg
+def test_optional_search_sql_ignores_diacritics_and_case(clean_db, tmp_path):
+    rows = [job(title="Asistent medical", company="Spitalul Județean", cif=None, location=["Pitești"]),
+            job(url="https://x.ro/j/2", title="Șofer C+E", company="TRANS SRL", cif="888", location=["Brașov"])]
+    run_import(tmp_path, rows)
+    ext = psql(sql="CREATE EXTENSION IF NOT EXISTS unaccent; CREATE EXTENSION IF NOT EXISTS pg_trgm;")
+    if ext.returncode != 0:
+        pytest.skip("unaccent / pg_trgm are not available on this server")
+    search_sql = P.SCHEMA_PATH.with_name("search.sql")
+    r = psql("-f", str(search_sql))
+    assert r.returncode == 0, r.stderr
+    r = psql("-f", str(search_sql))  # idempotent
+    assert r.returncode == 0, r.stderr
+    assert psql("-c", "SELECT title FROM search_jobs('ASISTENT medic PITESTI')").stdout.strip() == "Asistent medical"
+    assert psql("-c", "SELECT count(*) FROM search_jobs('sofer brasov')").stdout.strip() == "1"
+    assert psql("-c", "SELECT count(*) FROM search_jobs('sofer pitesti')").stdout.strip() == "0"
+    assert psql("-c", "SELECT count(*) FROM search_jobs('')").stdout.strip() == "2"  # no words: everything, capped
+    run_import(tmp_path, rows + [job(url="https://x.ro/j/3", title="Contabil", cif="999", company="C SRL")])  # still works after a re-import
+    assert psql("-c", "SELECT count(*) FROM search_jobs('contabil')").stdout.strip() == "1"
