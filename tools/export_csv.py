@@ -3,10 +3,11 @@
     py tools/export_csv.py jobs.csv run_all/final_distinct.jsonl [more.jsonl ...]
 
 Accepts both the model format (url/title/company/cif/location[]) and the own-site format (job_link/job_title/city/county/remote).
-Duplicate links are written once. UTF-8 with BOM so Excel opens the diacritics correctly.
+Duplicate links are written once. Rows whose CIF field holds a personal ID (11+ digits, a CNP) are dropped. UTF-8 with BOM so Excel opens the diacritics correctly.
 """
 import csv
 import json
+import re
 import sys
 
 COLUMNS = ["titlu", "firma", "cif", "locatie", "judet", "remote", "link", "sursa"]
@@ -32,6 +33,8 @@ def export(paths: list[str], out: str) -> int:
             if not line.strip():
                 continue
             row = row_of(json.loads(line))
+            if len(re.sub(r"\D", "", row["cif"])) >= 11:
+                continue  # 11+ digits is a personal ID (CNP) of a private employer, never a CIF: GDPR, not exported
             if row["link"] and row["titlu"] and row["link"] not in seen:
                 seen.add(row["link"])
                 rows.append(row)

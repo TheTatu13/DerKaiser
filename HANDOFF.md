@@ -96,3 +96,10 @@ Acum `Net.max_bytes` decide (boards: 60 MB). `boards.py`: 185 -> 250 joburi.
 - Docstring pe toate functiile publice din modulele DerKaiser (engine, jobs, model, net, bridge, boards, portals, posturi, ejobs, workday, financials, merge, discovery, jooble) si pe scripturile din `tools/`. Sabloanele mostenite de la Brewtality (api, validate_jobs, self_healing, learn, parse, main) au ramas neatinse.
 - Teste noi: `tests/test_anaf_batch_regress.py`. Total: 547 trec, 8 sarite.
 - Rulare joburi pe firme: pornita de test 35 min (2.400 firme procesate, 317 cu site, 467 joburi), apoi oprita la cererea utilizatorului; reia de unde a ramas cu `run_firme\chain_after_screen.ps1`.
+
+## Baza de date PostgreSQL (2026-11-20)
+- `db/schema.sql` + `scraper/pgexport.py`: joburile din jsonl -> un singur fisier `import.sql` (upsert dupa CIF/URL, tranzactie). Nu se conecteaza la nicio baza.
+- Validat pe un Postgres 16 real cu datele reale: 8.824 joburi, 3.577 firme, incarcare 0,3 s, a doua rulare nu dubleaza nimic.
+- Schema e a noastra; schema inviitor.ro nu e cunoscuta (baza lor e un PostgreSQL, dar nu avem structura).
+- Descoperit la export: 14 joburi ANOFM aveau un CNP (13 cifre) in campul `cif` (angajatori persoane fizice). Sunt excluse din SQL si din CSV (`tools/export_csv.py`).
+- `jobs.cif` e optional: 1.389 de joburi (posturi.gov.ro 1.132 + ATS) n-au CIF; pastreaza `company_name`.
