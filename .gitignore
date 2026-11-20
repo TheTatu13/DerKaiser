@@ -27,3 +27,5 @@ recon*.py
 make_docs_all.py
 derkaiser.zip
 *.db
+
+!scraper/reconcile.py
