@@ -1,0 +1,12 @@
+{
+  "run": 2,
+  "finished": false,
+  "failed": false,
+  "reason": "time budget used",
+  "firms_total": 488297,
+  "firms_checked": 39486,
+  "firms_with_site": 7028,
+  "firms_jobs_done": 6862,
+  "job_lines": 2423,
+  "seconds": 19560
+}

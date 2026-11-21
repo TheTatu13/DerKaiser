@@ -1,0 +1,789 @@
+{
+  "firms_done": 626,
+  "firms_with_jobs": 155,
+  "jobs_total": 793,
+  "dead_links": 28,
+  "by_method": {
+    "anofm": 106,
+    "none": 470,
+    "recipe": 22,
+    "listing": 23,
+    "workday": 3,
+    "jsonld": 1,
+    "personio": 1
+  },
+  "flags": {
+    "recipe_learned": 22,
+    "truncated": 2
+  },
+  "requests": 1817,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 1592,
+    "retries": 31,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 3240,
+  "firms_with_jobs": 461,
+  "jobs_total": 1936,
+  "dead_links": 49,
+  "by_method": {
+    "anofm": 340,
+    "none": 2777,
+    "recipe": 51,
+    "listing": 63,
+    "workday": 4,
+    "jsonld": 3,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 51,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 1
+  },
+  "requests": 6297,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 1364,
+    "retries": 12,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 3476,
+  "firms_with_jobs": 475,
+  "jobs_total": 1982,
+  "dead_links": 49,
+  "by_method": {
+    "anofm": 349,
+    "none": 2999,
+    "recipe": 52,
+    "listing": 67,
+    "workday": 4,
+    "jsonld": 3,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 52,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 1
+  },
+  "requests": 6638,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 858,
+    "retries": 3,
+    "cache_hits": 0,
+    "blocked": 3,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 3664,
+  "firms_with_jobs": 488,
+  "jobs_total": 2067,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 357,
+    "none": 3174,
+    "recipe": 54,
+    "listing": 70,
+    "workday": 4,
+    "jsonld": 3,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 54,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 6928,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 746,
+    "retries": 1,
+    "cache_hits": 0,
+    "blocked": 1,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 3936,
+  "firms_with_jobs": 511,
+  "jobs_total": 2154,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 373,
+    "none": 3423,
+    "recipe": 57,
+    "listing": 74,
+    "workday": 4,
+    "jsonld": 3,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 57,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 7398,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 1106,
+    "retries": 15,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 4212,
+  "firms_with_jobs": 529,
+  "jobs_total": 2201,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 387,
+    "none": 3681,
+    "recipe": 59,
+    "listing": 75,
+    "workday": 4,
+    "jsonld": 4,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 59,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 7807,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 989,
+    "retries": 5,
+    "cache_hits": 0,
+    "blocked": 2,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 4534,
+  "firms_with_jobs": 548,
+  "jobs_total": 2239,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 402,
+    "none": 3984,
+    "recipe": 60,
+    "listing": 78,
+    "workday": 4,
+    "jsonld": 4,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 60,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 8254,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 914,
+    "retries": 4,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 4638,
+  "firms_with_jobs": 550,
+  "jobs_total": 2242,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 404,
+    "none": 4086,
+    "recipe": 60,
+    "listing": 78,
+    "workday": 4,
+    "jsonld": 4,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 60,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 8373,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 331,
+    "retries": 1,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 4667,
+  "firms_with_jobs": 550,
+  "jobs_total": 2242,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 404,
+    "none": 4115,
+    "recipe": 60,
+    "listing": 78,
+    "workday": 4,
+    "jsonld": 4,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 60,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 8404,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 90,
+    "retries": 0,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 4713,
+  "firms_with_jobs": 550,
+  "jobs_total": 2242,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 404,
+    "none": 4161,
+    "recipe": 60,
+    "listing": 78,
+    "workday": 4,
+    "jsonld": 4,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 60,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 8457,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 146,
+    "retries": 0,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 4781,
+  "firms_with_jobs": 551,
+  "jobs_total": 2243,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 405,
+    "none": 4228,
+    "recipe": 60,
+    "listing": 78,
+    "workday": 4,
+    "jsonld": 4,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 60,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 8533,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 215,
+    "retries": 4,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 4909,
+  "firms_with_jobs": 556,
+  "jobs_total": 2253,
+  "dead_links": 53,
+  "by_method": {
+    "anofm": 407,
+    "none": 4351,
+    "recipe": 61,
+    "listing": 80,
+    "workday": 4,
+    "jsonld": 4,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 61,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 8723,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 461,
+    "retries": 1,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 5042,
+  "firms_with_jobs": 560,
+  "jobs_total": 2265,
+  "dead_links": 54,
+  "by_method": {
+    "anofm": 409,
+    "none": 4479,
+    "recipe": 62,
+    "listing": 81,
+    "workday": 4,
+    "jsonld": 5,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 62,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 8928,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 485,
+    "retries": 0,
+    "cache_hits": 0,
+    "blocked": 1,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 5174,
+  "firms_with_jobs": 562,
+  "jobs_total": 2267,
+  "dead_links": 54,
+  "by_method": {
+    "anofm": 411,
+    "none": 4609,
+    "recipe": 62,
+    "listing": 81,
+    "workday": 4,
+    "jsonld": 5,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 62,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 9096,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 438,
+    "retries": 1,
+    "cache_hits": 0,
+    "blocked": 1,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 5295,
+  "firms_with_jobs": 568,
+  "jobs_total": 2276,
+  "dead_links": 54,
+  "by_method": {
+    "anofm": 416,
+    "none": 4724,
+    "recipe": 63,
+    "listing": 81,
+    "workday": 4,
+    "jsonld": 5,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 63,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 9249,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 405,
+    "retries": 2,
+    "cache_hits": 0,
+    "blocked": 1,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 5486,
+  "firms_with_jobs": 577,
+  "jobs_total": 2292,
+  "dead_links": 55,
+  "by_method": {
+    "anofm": 422,
+    "none": 4906,
+    "recipe": 65,
+    "listing": 81,
+    "workday": 4,
+    "jsonld": 6,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 65,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 9544,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 708,
+    "retries": 5,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 5612,
+  "firms_with_jobs": 585,
+  "jobs_total": 2314,
+  "dead_links": 55,
+  "by_method": {
+    "anofm": 426,
+    "none": 5024,
+    "recipe": 67,
+    "listing": 83,
+    "workday": 4,
+    "jsonld": 6,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 67,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 9714,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 446,
+    "retries": 4,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 5827,
+  "firms_with_jobs": 592,
+  "jobs_total": 2346,
+  "dead_links": 55,
+  "by_method": {
+    "anofm": 430,
+    "none": 5232,
+    "recipe": 69,
+    "listing": 84,
+    "workday": 4,
+    "jsonld": 6,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 69,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 10000,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 759,
+    "retries": 2,
+    "cache_hits": 0,
+    "blocked": 2,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 5914,
+  "firms_with_jobs": 593,
+  "jobs_total": 2347,
+  "dead_links": 55,
+  "by_method": {
+    "anofm": 431,
+    "none": 5318,
+    "recipe": 69,
+    "listing": 84,
+    "workday": 4,
+    "jsonld": 6,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 69,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 10107,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 282,
+    "retries": 0,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 6031,
+  "firms_with_jobs": 600,
+  "jobs_total": 2367,
+  "dead_links": 55,
+  "by_method": {
+    "anofm": 436,
+    "none": 5428,
+    "recipe": 70,
+    "listing": 85,
+    "workday": 4,
+    "jsonld": 6,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 70,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 10256,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 397,
+    "retries": 4,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 6229,
+  "firms_with_jobs": 610,
+  "jobs_total": 2389,
+  "dead_links": 56,
+  "by_method": {
+    "anofm": 444,
+    "none": 5616,
+    "recipe": 71,
+    "listing": 86,
+    "workday": 4,
+    "jsonld": 6,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 71,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 10508,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 662,
+    "retries": 3,
+    "cache_hits": 0,
+    "blocked": 1,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 6367,
+  "firms_with_jobs": 617,
+  "jobs_total": 2403,
+  "dead_links": 56,
+  "by_method": {
+    "anofm": 449,
+    "none": 5747,
+    "recipe": 72,
+    "listing": 86,
+    "workday": 4,
+    "jsonld": 7,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 72,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 10705,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 485,
+    "retries": 2,
+    "cache_hits": 0,
+    "blocked": 2,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 6570,
+  "firms_with_jobs": 624,
+  "jobs_total": 2412,
+  "dead_links": 56,
+  "by_method": {
+    "anofm": 450,
+    "none": 5943,
+    "recipe": 72,
+    "listing": 92,
+    "workday": 4,
+    "jsonld": 7,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 72,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 10988,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 716,
+    "retries": 12,
+    "cache_hits": 0,
+    "blocked": 2,
+    "circuit_open": 0
+  }
+}
+{
+  "firms_done": 6862,
+  "firms_with_jobs": 630,
+  "jobs_total": 2423,
+  "dead_links": 56,
+  "by_method": {
+    "anofm": 455,
+    "none": 6229,
+    "recipe": 73,
+    "listing": 92,
+    "workday": 4,
+    "jsonld": 7,
+    "personio": 1,
+    "lever": 1
+  },
+  "flags": {
+    "recipe_learned": 73,
+    "truncated": 5,
+    "recipe_drift": 1,
+    "checks_capped": 2
+  },
+  "requests": 11355,
+  "renders": 0,
+  "firms_left": 0,
+  "dry_run": true,
+  "net": {
+    "requests": 970,
+    "retries": 7,
+    "cache_hits": 0,
+    "blocked": 0,
+    "circuit_open": 0
+  }
+}
